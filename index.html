@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PointPro</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#080d18;color:#fff;padding-bottom:82px}
@@ -32,11 +33,11 @@ button{font:inherit;cursor:pointer}
 </style>
 </head>
 <body>
-<header class="header"><div class="logo">Point<span>Pro</span></div><button class="telegram" onclick="toast('Telegram connection will be added next')">✈ Telegram</button></header>
+<header class="header"><div class="logo">Point<span>Pro</span></div><button class="telegram" onclick="connectTelegram()">✈ Telegram</button></header>
 
 <main class="container">
 <section id="home" class="page active">
-<div class="welcome"><p>Welcome back 👋</p><h1>My Dashboard</h1></div>
+<div class="welcome"><p>Welcome back 👋</p><h1 id="welcomeName">My Dashboard</h1><div id="tgStatus" class="muted" style="margin-top:7px"></div></div>
 <div class="balance"><div class="balance-title">Total Balance</div><h2>৳ <span id="balance">1,250.00</span></h2><div class="grid2"><div class="mini"><small>Today's Earnings</small><strong>৳48.75</strong></div><div class="mini"><small>This Month</small><strong>৳780.50</strong></div></div></div>
 <div class="card"><div class="card-head"><h3>24 Hour Earnings</h3><span class="live">● LIVE</span></div><div class="circle"><div class="circle-in"><small>Today's Earnings</small><strong>৳48.75</strong><span class="green">+৳0.03 / min</span></div></div><p class="note">24H Progress • 68%</p></div>
 <div class="card"><div class="card-head"><h3>Active Plan</h3><span class="live">ACTIVE</span></div><div class="row"><small>Package</small><strong>Standard</strong></div><div class="row"><small>Investment</small><strong>৳5,000</strong></div><button class="btn" onclick="showPage('plans',1)">View Plans</button></div>
@@ -54,7 +55,7 @@ button{font:inherit;cursor:pointer}
 
 <section id="wallet" class="page"><div class="welcome"><p>Manage your funds</p><h1>Wallet</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Available Balance</div><h2 style="font-size:36px;margin-top:8px">৳1,250.00</h2></div><button class="btn" onclick="toast('Deposit will be connected after payment backend is added')">Deposit</button><button class="btn" onclick="toast('Withdrawal will be connected after wallet backend is added')">Withdraw</button></div><div class="card"><div class="card-head"><h3>Recent Transactions</h3></div><div class="row"><span>Demo Earnings</span><strong class="green">+৳48.75</strong></div><div class="row"><span>Investment</span><strong>৳5,000</strong></div></div></section>
 
-<section id="profile" class="page"><div class="welcome"><p>Account</p><h1>My Profile</h1></div><div class="card"><div style="text-align:center;padding:10px 0 20px"><div style="font-size:55px">👤</div><h2 style="font-size:22px;margin-top:8px">PointPro User</h2><div class="muted" style="margin-top:5px">Telegram account</div></div><div class="row"><small>User ID</small><strong>USER123</strong></div><div class="row"><small>Status</small><strong class="green">Active</strong></div></div></section>
+<section id="profile" class="page"><div class="welcome"><p>Account</p><h1>My Profile</h1></div><div class="card"><div style="text-align:center;padding:10px 0 20px"><div style="font-size:55px">👤</div><h2 style="font-size:22px;margin-top:8px">PointPro User</h2><div class="muted" style="margin-top:5px">Telegram account</div></div><div class="row"><small>User ID</small><strong id="userId">—</strong></div><div class="row"><small>Username</small><strong id="username">—</strong></div><div class="row"><small>Status</small><strong id="accountStatus" class="green">Demo</strong></div></div></section>
 </main>
 
 <nav class="bottom"><div class="nav active" onclick="showPage('home',0)">🏠<span>Home</span></div><div class="nav" onclick="showPage('plans',1)">💰<span>Plans</span></div><div class="nav" onclick="showPage('referral',2)">👥<span>Referral</span></div><div class="nav" onclick="showPage('wallet',3)">💳<span>Wallet</span></div><div class="nav" onclick="showPage('profile',4)">👤<span>Profile</span></div></nav>
@@ -64,6 +65,29 @@ button{font:inherit;cursor:pointer}
 function showPage(page,index){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.nav')[index].classList.add('active');window.scrollTo(0,0)}
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>el.style.display='none',2500)}
 function copyReferral(){const text=document.getElementById('refLink').textContent.trim();if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('Referral link copied'))}else{toast(text)}}
+
+async function connectTelegram(){
+  if(!window.Telegram || !Telegram.WebApp){ toast('Telegram Web App থেকে খুলুন'); return; }
+  Telegram.WebApp.ready(); Telegram.WebApp.expand();
+  const initData=Telegram.WebApp.initData;
+  if(!initData){ toast('Telegram user data পাওয়া যায়নি'); return; }
+  try{
+    const res=await fetch('/api/telegram-user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Verification failed');
+    const u=data.user;
+    document.getElementById('welcomeName').textContent='Hi, '+(u.first_name||'User')+' 👋';
+    document.getElementById('tgStatus').textContent='Telegram account connected';
+    document.getElementById('userId').textContent=u.id;
+    document.getElementById('username').textContent=u.username?'@'+u.username:'Not set';
+    document.getElementById('accountStatus').textContent='Connected';
+    toast('Telegram connected ✓');
+  }catch(e){toast('Telegram verification failed');}
+}
+if(window.Telegram && Telegram.WebApp){
+  Telegram.WebApp.ready();
+  if(Telegram.WebApp.initData) connectTelegram();
+}
 </script>
 </body>
 </html>
