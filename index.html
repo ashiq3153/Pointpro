@@ -74,7 +74,27 @@ button{font:inherit;cursor:pointer}
  <div class="info" style="margin-top:10px"><small>Per-minute calculation</small><strong id="calcMinute">৳0.006944 / min</strong></div>
 </div>
 </section>
-<section id="referral" class="page"><div class="welcome"><p>Invite friends</p><h1>Referral</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Total Commission</div><h2 style="font-size:36px;margin-top:8px">৳350.00</h2></div><div class="row"><small>Total Referrals</small><strong>12</strong></div><div class="row"><small>Active Referrals</small><strong>8</strong></div><div class="ref" id="refLink">https://pointpro.app/ref/USER123</div><button class="btn" onclick="copyReferral()">Copy Referral Link</button></div></section>
+<section id="referral" class="page">
+<div class="welcome"><p>Invite friends & earn</p><h1>Referral</h1></div>
+<div class="card">
+  <div style="text-align:center;padding:10px 0 22px">
+    <div class="muted">Total Commission</div>
+    <h2 style="font-size:36px;margin-top:8px">৳350.00</h2>
+  </div>
+  <div class="row"><small>Total Referrals</small><strong id="totalReferrals">12</strong></div>
+  <div class="row"><small>Active Referrals</small><strong id="activeReferrals">8</strong></div>
+  <div class="row"><small>Referral Code</small><strong id="refCode">USER123</strong></div>
+  <div class="ref" id="refLink">https://pointpro-one.vercel.app/?ref=USER123</div>
+  <button class="btn" onclick="copyReferral()">📋 Copy Referral Link</button>
+  <button class="btn" style="background:#168dcc;color:#fff" onclick="shareReferral()">📤 Share on Telegram</button>
+</div>
+<div class="card">
+  <div class="card-head"><h3>How Referral Works</h3><span class="live">INFO</span></div>
+  <div class="row"><small>1</small><span>Copy your referral link</span></div>
+  <div class="row"><small>2</small><span>Share it with your friends</span></div>
+  <div class="row"><small>3</small><span>Referral activity appears here</span></div>
+</div>
+</section>
 
 <section id="wallet" class="page"><div class="welcome"><p>Manage your funds</p><h1>Wallet</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Available Balance</div><h2 style="font-size:36px;margin-top:8px">৳1,250.00</h2></div><button class="btn" onclick="toast('Deposit will be connected after payment backend is added')">Deposit</button><button class="btn" onclick="toast('Withdrawal will be connected after wallet backend is added')">Withdraw</button></div><div class="card"><div class="card-head"><h3>Recent Transactions</h3></div><div class="row"><span>Demo Earnings</span><strong class="green">+৳48.75</strong></div><div class="row"><span>Investment</span><strong>৳5,000</strong></div></div></section>
 
@@ -104,7 +124,20 @@ function selectPlan(amount){
 renderPlans();
 function showPage(page,index){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.nav')[index].classList.add('active');window.scrollTo(0,0)}
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>el.style.display='none',2500)}
-function copyReferral(){const text=document.getElementById('refLink').textContent.trim();if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('Referral link copied'))}else{toast(text)}}
+function copyReferral(){
+ const text=document.getElementById('refLink').textContent.trim();
+ if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('Referral link copied ✓')).catch(()=>toast(text));}
+ else toast(text);
+}
+function shareReferral(){
+ const link=document.getElementById('refLink').textContent.trim();
+ const text='Join PointPro with my referral link: '+link;
+ if(window.Telegram && Telegram.WebApp && Telegram.WebApp.openTelegramLink){
+   Telegram.WebApp.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join PointPro with my referral link'));
+ }else{
+   window.open('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(text),'_blank');
+ }
+}
 
 async function connectTelegram(){
   if(!window.Telegram || !Telegram.WebApp){ toast('Telegram Web App থেকে খুলুন'); return; }
