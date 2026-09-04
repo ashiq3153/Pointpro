@@ -45,12 +45,9 @@ button{font:inherit;cursor:pointer}
 
 <section id="plans" class="page">
 <div class="welcome"><p>Choose your package</p><h1>Plans</h1></div>
-<div class="plan"><div class="plan-top"><div class="plan-name">Free Plan</div><span class="badge">FREE</span></div><div class="price">৳0</div><div class="duration">No investment required</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Duration</small><strong>Daily</strong></div><div class="info"><small>Return</small><strong>Demo</strong></div></div><button class="btn" onclick="toast('Free plan activation is demo only')">Activate Free Plan</button></div>
-<div class="plan"><div class="plan-top"><div class="plan-name">Basic</div><span class="badge">STARTER</span></div><div class="price">৳1,000</div><div class="duration">1 Month</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Period</small><strong>30 Days</strong></div><div class="info"><small>Return</small><strong>Admin set</strong></div></div><button class="btn" onclick="toast('Package details will be connected to backend')">View Details</button></div>
-<div class="plan featured"><div class="plan-top"><div class="plan-name">Standard</div><span class="badge">POPULAR</span></div><div class="price">৳5,000</div><div class="duration">1 Month</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Period</small><strong>30 Days</strong></div><div class="info"><small>Return</small><strong>Admin set</strong></div></div><button class="btn" onclick="toast('Package details will be connected to backend')">View Details</button></div>
-<div class="plan"><div class="plan-top"><div class="plan-name">Premium</div><span class="badge">PREMIUM</span></div><div class="price">৳10,000</div><div class="duration">1 Month</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Period</small><strong>30 Days</strong></div><div class="info"><small>Return</small><strong>Admin set</strong></div></div><button class="btn" onclick="toast('Package details will be connected to backend')">View Details</button></div>
+<div class="card"><div class="card-head"><h3>30 Day Calculator</h3><span class="live">CALCULATOR</span></div><div class="muted">Monthly rate: 30% • Daily equivalent: 1%</div><div class="grid2" style="margin-top:14px"><div class="info"><small>Selected Package</small><strong id="calcPackage">৳1,000</strong></div><div class="info"><small>30-Day Amount</small><strong id="calcReturn">৳300.00</strong></div></div><div class="info" style="margin-top:10px"><small>Minute equivalent (display calculation)</small><strong id="calcMinute">৳0.006944 / min</strong></div></div>
+<div id="planList"></div>
 </section>
-
 <section id="referral" class="page"><div class="welcome"><p>Invite friends</p><h1>Referral</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Total Commission</div><h2 style="font-size:36px;margin-top:8px">৳350.00</h2></div><div class="row"><small>Total Referrals</small><strong>12</strong></div><div class="row"><small>Active Referrals</small><strong>8</strong></div><div class="ref" id="refLink">https://pointpro.app/ref/USER123</div><button class="btn" onclick="copyReferral()">Copy Referral Link</button></div></section>
 
 <section id="wallet" class="page"><div class="welcome"><p>Manage your funds</p><h1>Wallet</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Available Balance</div><h2 style="font-size:36px;margin-top:8px">৳1,250.00</h2></div><button class="btn" onclick="toast('Deposit will be connected after payment backend is added')">Deposit</button><button class="btn" onclick="toast('Withdrawal will be connected after wallet backend is added')">Withdraw</button></div><div class="card"><div class="card-head"><h3>Recent Transactions</h3></div><div class="row"><span>Demo Earnings</span><strong class="green">+৳48.75</strong></div><div class="row"><span>Investment</span><strong>৳5,000</strong></div></div></section>
@@ -62,6 +59,23 @@ button{font:inherit;cursor:pointer}
 <div id="toast" class="toast"></div>
 
 <script>
+const plans=[100,500,1000,2000,5000,10000,50000,100000];
+function money(n){return '৳'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function renderPlans(){
+ const box=document.getElementById('planList');
+ box.innerHTML=plans.map((amount,i)=>{
+  const monthly=amount*.30, daily=amount*.01, minute=daily/1440;
+  return '<div class="plan '+(amount===5000?'featured':'')+'"><div class="plan-top"><div class="plan-name">'+money(amount).replace('.00','')+'</div><span class="badge">'+(amount===5000?'POPULAR':'30 DAYS')+'</span></div><div class="price">'+money(monthly)+' <span class="muted" style="font-size:12px">monthly equivalent</span></div><div class="duration">Package amount • 30 days</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Daily equivalent</small><strong>'+money(daily)+'</strong></div><div class="info"><small>Per minute equivalent</small><strong>'+money(minute)+'</strong></div></div><button class="btn" onclick="selectPlan('+amount+')">Select Plan</button></div>';
+ }).join('');
+}
+function selectPlan(amount){
+ const monthly=amount*.30,daily=amount*.01,minute=daily/1440;
+ document.getElementById('calcPackage').textContent=money(amount).replace('.00','');
+ document.getElementById('calcReturn').textContent=money(monthly);
+ document.getElementById('calcMinute').textContent=money(minute)+' / min';
+ toast('Selected '+money(amount).replace('.00','')+' package');
+}
+renderPlans();
 function showPage(page,index){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.nav')[index].classList.add('active');window.scrollTo(0,0)}
 function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>el.style.display='none',2500)}
 function copyReferral(){const text=document.getElementById('refLink').textContent.trim();if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('Referral link copied'))}else{toast(text)}}
@@ -88,6 +102,8 @@ if(window.Telegram && Telegram.WebApp){
   Telegram.WebApp.ready();
   if(Telegram.WebApp.initData) connectTelegram();
 }
-</script>
+
 </body>
+</html>
+</script></body>
 </html>
