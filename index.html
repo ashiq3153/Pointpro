@@ -1,1 +1,533 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PointPro</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#080d18;
+  color:#fff;
+  padding-bottom:85px;
+}
+
+.header{
+  height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  border-bottom:1px solid #1d2638;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.logo span{
+  color:#35e58a;
+}
+
+.telegram{
+  background:#168dcc;
+  color:white;
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.container{
+  max-width:600px;
+  margin:auto;
+  padding:20px 16px;
+}
+
+.welcome{
+  margin-bottom:18px;
+}
+
+.welcome p{
+  color:#8792a8;
+  font-size:13px;
+  margin-bottom:5px;
+}
+
+.welcome h1{
+  font-size:23px;
+}
+
+/* Balance */
+
+.balance{
+  background:linear-gradient(135deg,#142b27,#101c29);
+  border:1px solid #234439;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.balance-title{
+  color:#94a2b8;
+  font-size:13px;
+}
+
+.balance h2{
+  font-size:34px;
+  margin:8px 0 20px;
+}
+
+.balance-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.balance-item{
+  background:#ffffff08;
+  border-radius:12px;
+  padding:12px;
+}
+
+.balance-item small{
+  color:#8290a7;
+  display:block;
+  margin-bottom:5px;
+}
+
+.balance-item strong{
+  font-size:15px;
+}
+
+/* Earnings */
+
+.earning-card{
+  background:#101725;
+  border:1px solid #1e293d;
+  border-radius:20px;
+  padding:22px 15px;
+  text-align:center;
+}
+
+.title-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.title-row h3{
+  font-size:17px;
+}
+
+.live{
+  font-size:10px;
+  color:#35e58a;
+  background:#35e58a18;
+  padding:5px 9px;
+  border-radius:20px;
+}
+
+/* Circle */
+
+.circle{
+  width:225px;
+  height:225px;
+  margin:0 auto 18px;
+  border-radius:50%;
+  background:conic-gradient(
+    #35e58a 0deg,
+    #35e58a 248deg,
+    #263147 248deg,
+    #263147 360deg
+  );
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.circle::before{
+  content:"";
+  position:absolute;
+  width:185px;
+  height:185px;
+  background:#101725;
+  border-radius:50%;
+}
+
+.circle-content{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.circle-content small{
+  color:#8792a8;
+  font-size:11px;
+}
+
+.circle-content strong{
+  font-size:29px;
+  margin:7px 0;
+}
+
+.circle-content span{
+  color:#35e58a;
+  font-size:11px;
+}
+
+.progress-info{
+  color:#7e8aa1;
+  font-size:11px;
+}
+
+/* Plan */
+
+.section{
+  margin-top:18px;
+  background:#101725;
+  border:1px solid #1e293d;
+  border-radius:18px;
+  padding:18px;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.section-head h3{
+  font-size:17px;
+}
+
+.status{
+  color:#35e58a;
+  background:#35e58a16;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:9px;
+  font-weight:bold;
+}
+
+.plan-box{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#172033;
+  padding:16px;
+  border-radius:14px;
+}
+
+.plan-name small,
+.plan-amount small{
+  color:#8490a6;
+  display:block;
+  margin-bottom:6px;
+  font-size:11px;
+}
+
+.plan-name strong{
+  font-size:20px;
+}
+
+.plan-amount{
+  text-align:right;
+}
+
+.plan-amount strong{
+  color:#35e58a;
+}
+
+.button{
+  width:100%;
+  border:0;
+  background:#35e58a;
+  color:#06130d;
+  padding:13px;
+  margin-top:13px;
+  border-radius:11px;
+  font-weight:bold;
+}
+
+/* Menu */
+
+.menu{
+  margin-top:18px;
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px;
+  background:#101725;
+  border:1px solid #1e293d;
+  border-radius:15px;
+  margin-bottom:10px;
+}
+
+.menu-icon{
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#182238;
+  border-radius:12px;
+  font-size:20px;
+}
+
+.menu-text strong{
+  font-size:14px;
+}
+
+.menu-text p{
+  color:#7d899f;
+  font-size:11px;
+  margin-top:4px;
+}
+
+/* Bottom */
+
+.bottom{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:72px;
+  background:#0d1422;
+  border-top:1px solid #202a3d;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:10;
+}
+
+.nav{
+  text-align:center;
+  color:#657188;
+  font-size:19px;
+}
+
+.nav span{
+  display:block;
+  font-size:9px;
+  margin-top:4px;
+}
+
+.nav.active{
+  color:#35e58a;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">Point<span>Pro</span></div>
+  <button class="telegram">✈ Telegram</button>
+</header>
+
+<main class="container">
+
+  <div class="welcome">
+    <p>Welcome back 👋</p>
+    <h1>My Dashboard</h1>
+  </div>
+
+  <!-- Balance -->
+
+  <section class="balance">
+    <div class="balance-title">Total Balance</div>
+    <h2>৳ <span id="balance">1,250.00</span></h2>
+
+    <div class="balance-grid">
+      <div class="balance-item">
+        <small>Today's Earnings</small>
+        <strong>৳48.75</strong>
+      </div>
+
+      <div class="balance-item">
+        <small>This Month</small>
+        <strong>৳780.50</strong>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 24 Hour Earnings -->
+
+  <section class="earning-card">
+
+    <div class="title-row">
+      <h3>24 Hour Earnings</h3>
+      <span class="live">● LIVE</span>
+    </div>
+
+    <div class="circle">
+
+      <div class="circle-content">
+        <small>Today's Earnings</small>
+
+        <strong>৳48.75</strong>
+
+        <span id="minute">
+          +৳0.03 / min
+        </span>
+      </div>
+
+    </div>
+
+    <div class="progress-info">
+      24H Progress • <span id="percent">68%</span>
+    </div>
+
+  </section>
+
+
+  <!-- Active Plan -->
+
+  <section class="section">
+
+    <div class="section-head">
+      <h3>Active Plan</h3>
+      <span class="status">ACTIVE</span>
+    </div>
+
+    <div class="plan-box">
+
+      <div class="plan-name">
+        <small>Current Package</small>
+        <strong>Standard</strong>
+      </div>
+
+      <div class="plan-amount">
+        <small>Investment</small>
+        <strong>৳5,000</strong>
+      </div>
+
+    </div>
+
+    <button class="button">
+      View Plan
+    </button>
+
+  </section>
+
+
+  <!-- Menu -->
+
+  <div class="menu">
+
+    <div class="menu-item">
+      <div class="menu-icon">💰</div>
+
+      <div class="menu-text">
+        <strong>Investment Plans</strong>
+        <p>View available packages</p>
+      </div>
+    </div>
+
+
+    <div class="menu-item">
+      <div class="menu-icon">👥</div>
+
+      <div class="menu-text">
+        <strong>Referral Program</strong>
+        <p>12 referrals • ৳350 commission</p>
+      </div>
+    </div>
+
+
+    <div class="menu-item">
+      <div class="menu-icon">💳</div>
+
+      <div class="menu-text">
+        <strong>Wallet</strong>
+        <p>Deposit & withdrawal</p>
+      </div>
+    </div>
+
+
+    <div class="menu-item">
+      <div class="menu-icon">📊</div>
+
+      <div class="menu-text">
+        <strong>Monthly Report</strong>
+        <p>View your earning history</p>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- Bottom Navigation -->
+
+<nav class="bottom">
+
+  <div class="nav active">
+    🏠
+    <span>Home</span>
+  </div>
+
+  <div class="nav">
+    💰
+    <span>Plans</span>
+  </div>
+
+  <div class="nav">
+    👥
+    <span>Referral</span>
+  </div>
+
+  <div class="nav">
+    💳
+    <span>Wallet</span>
+  </div>
+
+  <div class="nav">
+    👤
+    <span>Profile</span>
+  </div>
+
+</nav>
+
+
+<script>
+
+/* Demo animation only */
+
+let balance = 1250.00;
+
+setInterval(function(){
+
+  balance += 0.01;
+
+  document.getElementById("balance").innerText =
+    balance.toFixed(2);
+
+},60000);
+
+</script>
+
+</body>
+          </html>
