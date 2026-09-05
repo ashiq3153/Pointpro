@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071426"/><stop offset=".55" stop-color="#10294b"/><stop offset="1" stop-color="#06101f"/></linearGradient>
+ <linearGradient id="machine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#273342"/><stop offset="1" stop-color="#080d14"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff1a8"/><stop offset=".3" stop-color="#ffd23a"/><stop offset="1" stop-color="#e89400"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <style>.coin{transform-box:fill-box;transform-origin:center;animation:move 5s linear infinite}.c2{animation-delay:1.2s}.c3{animation-delay:2.4s}.c4{animation-delay:3.6s}@keyframes move{0%{transform:translateX(-80px);opacity:0}10%{opacity:1}85%{opacity:1}100%{transform:translateX(410px);opacity:0}}.belt{animation:belt 1s linear infinite}@keyframes belt{to{transform:translateX(-38px)}}</style>
+</defs>
+<rect width="800" height="500" rx="34" fill="url(#bg)"/>
+<g opacity=".22" fill="#2f70f4"><circle cx="80" cy="80" r="3"/><circle cx="720" cy="70" r="4"/><circle cx="650" cy="420" r="3"/></g>
+<g transform="translate(45 55)">
+ <rect x="0" y="0" width="270" height="330" rx="22" fill="url(#machine)" stroke="#4e647e" stroke-width="3"/>
+ <rect x="28" y="38" width="214" height="44" rx="8" fill="#151e2a" stroke="#5e6e82"/>
+ <text x="135" y="67" fill="#fff" font-family="Arial" font-size="22" font-weight="800" text-anchor="middle">COIN FOR MINING</text>
+ <rect x="48" y="112" width="174" height="105" rx="14" fill="#07101c" stroke="#263d59"/>
+ <circle cx="96" cy="162" r="27" fill="#12345a" stroke="#2f70f4" stroke-width="3"/>
+ <circle cx="174" cy="162" r="27" fill="#12345a" stroke="#2f70f4" stroke-width="3"/>
+ <path d="M70 160h52M148 160h52" stroke="#2f70f4" stroke-width="5" filter="url(#glow)"/>
+ <rect x="52" y="240" width="166" height="58" rx="12" fill="#07111e" stroke="#284a73"/>
+ <text x="135" y="266" fill="#6da5ff" font-family="Arial" font-size="13" text-anchor="middle">PP MINING ENGINE</text>
+ <text x="135" y="286" fill="#fff" font-family="Arial" font-size="19" font-weight="800" text-anchor="middle">+0.00124 PP/s</text>
+</g>
+<g transform="translate(285 300)">
+ <g class="belt"><rect x="0" y="0" width="500" height="75" rx="16" fill="#171d26" stroke="#4a5563" stroke-width="3"/><path d="M0 38h500" stroke="#2e3948" stroke-width="4"/><path d="M20 15l25 0M75 15l25 0M130 15l25 0M185 15l25 0M240 15l25 0M295 15l25 0M350 15l25 0M405 15l25 0M460 15l25 0" stroke="#ffc928" stroke-width="8"/></g>
+</g>
+<g class="coin"><circle cx="345" cy="315" r="31" fill="url(#gold)" stroke="#fff0a0" stroke-width="3"/><text x="345" y="326" fill="#8b5600" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">PP</text></g>
+<g class="coin c2"><circle cx="345" cy="315" r="31" fill="url(#gold)" stroke="#fff0a0" stroke-width="3"/><text x="345" y="326" fill="#8b5600" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">PP</text></g>
+<g class="coin c3"><circle cx="345" cy="315" r="31" fill="url(#gold)" stroke="#fff0a0" stroke-width="3"/><text x="345" y="326" fill="#8b5600" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">PP</text></g>
+<g class="coin c4"><circle cx="345" cy="315" r="31" fill="url(#gold)" stroke="#fff0a0" stroke-width="3"/><text x="345" y="326" fill="#8b5600" font-family="Arial" font-size="30" font-weight="900" text-anchor="middle">PP</text></g>
+<g transform="translate(535 55)">
+ <rect width="220" height="150" rx="20" fill="#081221" fill-opacity=".92" stroke="#3c6fae" stroke-width="2"/>
+ <text x="20" y="34" fill="#fff" font-family="Arial" font-size="20" font-weight="800">Live Mining</text>
+ <circle cx="25" cy="62" r="6" fill="#27df78"/><text x="42" y="68" fill="#27df78" font-family="Arial" font-size="15" font-weight="700">ACTIVE</text>
+ <text x="20" y="101" fill="#9eb6d3" font-family="Arial" font-size="13">Collected</text>
+ <text id="amount" x="20" y="130" fill="#fff" font-family="Arial" font-size="25" font-weight="900">+0.00124 PP</text>
+</g>
+<g transform="translate(535 225)">
+ <rect width="220" height="120" rx="20" fill="#081221" fill-opacity=".92" stroke="#3c6fae" stroke-width="2"/>
+ <text x="20" y="34" fill="#9eb6d3" font-family="Arial" font-size="13">Balance Updated</text>
+ <text x="20" y="70" fill="#fff" font-family="Arial" font-size="24" font-weight="900">PP COIN</text>
+ <text x="20" y="98" fill="#55e5ff" font-family="Arial" font-size="16" font-weight="700">+0.00124 PP</text>
+</g>
+</svg>
