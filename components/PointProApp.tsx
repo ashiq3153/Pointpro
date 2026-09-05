@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu } from "lucide-react";
+import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home as HomeIcon, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu } from "lucide-react";
 
 type Tab = "home" | "mine" | "tasks" | "wallet" | "profile";
 const SPEED=0.00124;
@@ -22,20 +22,20 @@ export default function PointProApp(){
    <button onClick={()=>notify("Telegram will be connected from your bot settings")} className="flex items-center gap-2 rounded-2xl bg-[#159fe9] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(21,159,233,.2)]">✈ Telegram</button>
   </div></header>
   <main className="mx-auto max-w-[680px] px-4 pb-28 pt-5">
-   {tab==="home"&&<Home p={{balance,today,mining,speed,progress,setMining,setTab,notify}}/>}
+   {tab==="home"&&<HomePage p={{balance,today,mining,speed,progress,setMining,setTab,notify}}/>}
    {tab==="mine"&&<Mine p={{balance,today,mining,speed,boost,setMining,setBoost,notify}}/>}
    {tab==="tasks"&&<Tasks p={{mining,setMining,share,notify}}/>}
    {tab==="wallet"&&<Wallet p={{balance,today,notify}}/>}
    {tab==="profile"&&<Profile p={{copy,share}}/>}
   </main>
   <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#e3e8f1] bg-white/98 backdrop-blur"><div className="mx-auto grid max-w-[680px] grid-cols-5">
-   {([["home",Home,"Home"],["mine",Zap,"Mine"],["tasks",ListChecks,"Tasks"],["wallet",WalletCards,"Wallet"],["profile",UserRound,"Profile"]] as const).map(([k,I,l])=><button key={k} onClick={()=>setTab(k)} className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${tab===k?"text-[#2868ed]":"text-[#8993a6]"}`}><I size={22} strokeWidth={tab===k?2.5:2}/><span>{l}</span></button>)}
+   {([["home",HomeIcon,"Home"],["mine",Zap,"Mine"],["tasks",ListChecks,"Tasks"],["wallet",WalletCards,"Wallet"],["profile",UserRound,"Profile"]] as const).map(([k,I,l])=><button key={k} onClick={()=>setTab(k)} className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${tab===k?"text-[#2868ed]":"text-[#8993a6]"}`}><I size={22} strokeWidth={tab===k?2.5:2}/><span>{l}</span></button>)}
   </div></nav>
   {toast&&<div className="fixed bottom-24 left-1/2 z-[60] -translate-x-1/2 rounded-2xl bg-[#18243b] px-4 py-3 text-sm font-semibold text-white shadow-xl">{toast}</div>}
  </div>
 }
 
-function Home({p}:any){return <div className="space-y-5">
+function HomePage({p}:any){return <div className="space-y-5">
  <div className="flex items-start justify-between"><div><p className="text-[15px] text-[#8993a6]">Welcome back 👋</p><h1 className="mt-1 text-[30px] font-black tracking-tight">My Dashboard</h1></div><button onClick={()=>p.notify("No new notifications")} className="rounded-full bg-white p-3 shadow-[0_8px_25px_rgba(31,51,86,.09)]"><Bell size={20}/></button></div>
  <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#1850cf] p-6 text-white shadow-[0_18px_38px_rgba(47,112,244,.22)]"><div className="absolute right-0 top-0 opacity-20"><img src="/pp-coin-stack.svg" className="w-48"/></div>
   <p className="relative text-sm font-semibold text-blue-100">PP Coin Balance</p><div className="relative mt-2 text-[39px] font-black">{p.balance.toFixed(6)} <span className="text-lg text-blue-100">PP</span></div><p className="relative text-sm text-blue-100">≈ $0.00 USD • Live Rate</p>
