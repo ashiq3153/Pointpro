@@ -2,61 +2,52 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine, CheckCircle2, CircleUserRound,
-  Copy, Gift, Home, ListChecks, Menu, MessageCircle, Share2, Sparkles, Users,
-  WalletCards, Zap
+  Bell, ChevronRight, CircleHelp, Copy, Gift, Home, ListChecks, Share2,
+  ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine,
+  ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2
 } from "lucide-react";
 
-type Page = "home" | "mine" | "tasks" | "referral" | "wallet" | "profile";
+type Tab = "home" | "mine" | "tasks" | "wallet" | "profile";
 
 const SPEED = 0.00124;
-const REFERRAL = "PPUSER";
 const APP_URL = "https://pointpro-one.vercel.app";
+const REFERRAL = "PPUSER";
 
 export default function PointProApp() {
-  const [page, setPage] = useState<Page>("home");
+  const [tab, setTab] = useState<Tab>("home");
   const [balance, setBalance] = useState(0);
   const [today, setToday] = useState(0);
   const [mining, setMining] = useState(true);
-  const [boosted, setBoosted] = useState(false);
-  const [claimed, setClaimed] = useState(false);
-  const [tasks, setTasks] = useState(0);
+  const [boost, setBoost] = useState(false);
   const [toast, setToast] = useState("");
 
-  const rate = boosted ? SPEED * 1.1 : SPEED;
-  const progress = Math.min(100, Math.round((today / (rate * 86400)) * 100));
+  const speed = boost ? SPEED * 1.2 : SPEED;
 
   useEffect(() => {
     if (!mining) return;
-    const timer = window.setInterval(() => {
-      setBalance(v => v + rate);
-      setToday(v => v + rate);
+    const id = window.setInterval(() => {
+      setBalance(v => v + speed);
+      setToday(v => v + speed);
     }, 1000);
-    return () => window.clearInterval(timer);
-  }, [mining, rate]);
+    return () => window.clearInterval(id);
+  }, [mining, speed]);
 
   useEffect(() => {
     if (!toast) return;
-    const t = window.setTimeout(() => setToast(""), 2200);
-    return () => window.clearTimeout(t);
+    const id = window.setTimeout(() => setToast(""), 2200);
+    return () => window.clearTimeout(id);
   }, [toast]);
 
-  const notify = (message: string) => setToast(message);
-
-  const claimDaily = () => {
-    if (claimed) return notify("Daily reward already claimed");
-    setBalance(v => v + 5);
-    setToday(v => v + 5);
-    setClaimed(true);
-    setTasks(v => v + 1);
-    notify("+5 PP Coin added");
-  };
+  const notify = (s: string) => setToast(s);
+  const progress = Math.min(100, Math.round((today / (SPEED * 86400)) * 100));
 
   const copyReferral = async () => {
     try {
       await navigator.clipboard.writeText(`${APP_URL}/?ref=${REFERRAL}`);
       notify("Referral link copied");
-    } catch { notify("Copy failed"); }
+    } catch {
+      notify("Copy failed");
+    }
   };
 
   const shareReferral = async () => {
@@ -65,84 +56,132 @@ export default function PointProApp() {
     else await copyReferral();
   };
 
-  const nav = [
-    ["home", Home, "Home"], ["mine", Zap, "Mine"], ["tasks", ListChecks, "Tasks"],
-    ["referral", Users, "Referral"], ["wallet", WalletCards, "Wallet"], ["profile", CircleUserRound, "Profile"]
-  ] as const;
-
   return (
-    <div className="min-h-screen bg-[#070b14] pb-24">
-      <header className="sticky top-0 z-30 border-b border-slate-800/80 bg-[#080d18]/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-2xl items-center justify-between px-4">
-          <div className="text-2xl font-extrabold tracking-tight">Point<span className="text-emerald-400">Pro</span></div>
-          <button onClick={() => notify("Telegram connection will use your Bot/WebApp credentials")} className="flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2.5 font-bold text-white">
-            <MessageCircle size={18}/> Telegram
+    <div className="min-h-screen bg-[#f7f9fc] text-[#111827]">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-[68px] max-w-[680px] items-center justify-between px-5">
+          <div className="text-[27px] font-black tracking-[-1.5px]">Point<span className="text-[#21c875]">Pro</span></div>
+          <button onClick={() => notify("Telegram connection will be enabled with the bot token")}
+            className="flex items-center gap-2 rounded-xl bg-[#149ee9] px-4 py-2.5 text-sm font-bold text-white shadow-sm">
+            <span className="text-base">✈</span> Telegram
           </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 py-6">
-        {page === "home" && <HomePage {...{balance,today,mining,boosted,rate,progress,setMining,setPage,claimDaily,notify}} />}
-        {page === "mine" && <MinePage {...{mining,boosted,rate,setMining,setBoosted,notify}} />}
-        {page === "tasks" && <TasksPage {...{claimed,mining,setMining,claimDaily,shareReferral,notify}} />}
-        {page === "referral" && <ReferralPage {...{copyReferral,shareReferral}} />}
-        {page === "wallet" && <WalletPage balance={balance} today={today} tasks={tasks} notify={notify} />}
-        {page === "profile" && <ProfilePage balance={balance} />}
+      <main className="mx-auto max-w-[680px] px-4 pb-28 pt-5">
+        {tab === "home" && <Home balance={balance} today={today} mining={mining} speed={speed} progress={progress}
+          setMining={setMining} setTab={setTab} notify={notify} />}
+        {tab === "mine" && <Mine balance={balance} today={today} mining={mining} speed={speed}
+          boost={boost} setMining={setMining} setBoost={setBoost} notify={notify} />}
+        {tab === "tasks" && <Tasks mining={mining} setMining={setMining} share={shareReferral} notify={notify} />}
+        {tab === "wallet" && <Wallet balance={balance} today={today} notify={notify} />}
+        {tab === "profile" && <Profile balance={balance} copy={copyReferral} share={shareReferral} />}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-800 bg-[#09101c]/98">
-        <div className="mx-auto grid max-w-2xl grid-cols-6">
-          {nav.map(([key, Icon, label]) => (
-            <button key={key} onClick={() => setPage(key)} className={`flex flex-col items-center gap-1 py-3 text-[11px] ${page === key ? "text-emerald-400" : "text-slate-500"}`}>
-              <Icon size={21}/><span>{label}</span>
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/98 backdrop-blur">
+        <div className="mx-auto grid max-w-[680px] grid-cols-5">
+          {([
+            ["home", Home, "Home"], ["mine", Zap, "Mine"], ["tasks", ListChecks, "Tasks"],
+            ["wallet", WalletCards, "Wallet"], ["profile", UserRound, "Profile"]
+          ] as const).map(([key, Icon, label]) => (
+            <button key={key} onClick={() => setTab(key)}
+              className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${tab === key ? "text-[#2764e8]" : "text-slate-400"}`}>
+              <Icon size={22} strokeWidth={tab === key ? 2.5 : 2}/>
+              <span>{label}</span>
             </button>
           ))}
         </div>
       </nav>
-      {toast && <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-900 shadow-xl">{toast}</div>}
+
+      {toast && <div className="fixed bottom-24 left-1/2 z-[60] -translate-x-1/2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-xl">{toast}</div>}
     </div>
   );
 }
 
-function HomePage(p: any) {
+function Home(p: any) {
   return <div className="space-y-5">
-    <div><p className="text-slate-400">Welcome back 👋</p><h1 className="mt-1 text-3xl font-extrabold">PP Coin Miner</h1></div>
-    <section className="rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/70 to-slate-900 p-6 shadow-xl">
-      <p className="text-slate-400">PP Coin Balance</p>
-      <div className="mt-2 text-4xl font-extrabold">{p.balance.toFixed(6)} <span className="text-xl text-emerald-400">PP</span></div>
-      <p className="mt-2 text-sm text-slate-500">Live in-app mining balance</p>
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        <Stat title="Today's mined" value={`${p.today.toFixed(6)} PP`} />
-        <Stat title="Mining speed" value={`+${p.rate.toFixed(5)} PP/s`} />
+    <div className="flex items-start justify-between">
+      <div><p className="text-[15px] text-slate-500">Welcome back 👋</p><h1 className="mt-1 text-[30px] font-black tracking-tight">PP Coin Miner</h1></div>
+      <button onClick={() => p.notify("No new notifications")} className="mt-1 rounded-full border border-slate-200 bg-white p-2.5 shadow-sm"><Bell size={20}/></button>
+    </div>
+
+    <section className="overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2868ed] via-[#3267e8] to-[#1d56d5] p-6 text-white shadow-[0_14px_35px_rgba(37,99,235,.18)]">
+      <div className="flex items-center justify-between"><p className="text-sm font-semibold text-blue-100">PP Balance</p><span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">● LIVE</span></div>
+      <div className="mt-3 text-[39px] font-black tracking-tight">{p.balance.toFixed(6)} <span className="text-lg text-blue-100">PP</span></div>
+      <p className="mt-1 text-sm text-blue-100">≈ 0.00 USD (Live Rate)</p>
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <Mini title="Today Earned" value={p.today.toFixed(4) + " PP"}/>
+        <Mini title="Mining Speed" value={"+" + p.speed.toFixed(5) + " PP/s"}/>
       </div>
     </section>
-    <section className="rounded-3xl border border-slate-800 bg-[#101827] p-5">
-      <div className="flex items-center justify-between"><h2 className="text-xl font-bold">Mining Status</h2><span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-400">{p.mining ? "ACTIVE" : "PAUSED"}</span></div>
-      <div className="mx-auto my-7 grid h-56 w-56 place-items-center rounded-full border-[24px] border-slate-800 border-r-emerald-400 border-b-emerald-400">
-        <div className="text-center"><Zap className="mx-auto text-emerald-400"/><b className="block text-2xl">{p.balance.toFixed(4)}</b><span className="text-xs text-slate-400">PP Coin</span></div>
+
+    <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,23,42,.05)]">
+      <div className="flex items-center justify-between"><h2 className="text-[21px] font-black">Mining Status</h2>
+        <span className={`rounded-full px-3 py-1 text-xs font-bold ${p.mining ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-500"}`}>{p.mining ? "● Active" : "Paused"}</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-800"><div className="h-full rounded-full bg-emerald-400 transition-all" style={{width: `${Math.max(2,p.progress)}%`}}/></div>
-      <p className="mt-2 text-center text-sm text-slate-500">24H progress • {p.progress}%</p>
-      <button onClick={() => p.setMining((v:boolean)=>!v)} className="mt-5 w-full rounded-xl bg-emerald-400 py-3 font-extrabold text-slate-950">{p.mining ? "Pause Mining" : "Start Mining"}</button>
+      <div className="relative mx-auto my-7 grid h-[220px] w-[220px] place-items-center rounded-full"
+        style={{background: `conic-gradient(#2f6df3 ${Math.max(5,p.progress)}%, #e8edf5 0)`}}>
+        <div className="grid h-[176px] w-[176px] place-items-center rounded-full bg-white text-center">
+          <div><Zap size={25} className="mx-auto text-[#2868ed]"/><div className="mt-1 text-[25px] font-black">{p.balance.toFixed(4)}</div><div className="text-xs font-semibold text-slate-400">PP Coin</div></div>
+        </div>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#2868ed]" style={{width:`${Math.max(3,p.progress)}%`}}/></div>
+      <p className="mt-2 text-center text-sm text-slate-400">24H Progress • {p.progress}%</p>
+      <button onClick={() => p.setMining((v:boolean)=>!v)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2868ed] py-3.5 font-bold text-white shadow-lg shadow-blue-100">
+        {p.mining ? <><Pause size={17}/> Pause Mining</> : <><Play size={17}/> Start Mining</>}
+      </button>
     </section>
-    <div className="grid grid-cols-4 gap-2">
-      <Action icon={<Gift/>} label="Daily" onClick={p.claimDaily}/><Action icon={<Zap/>} label="Boost" onClick={() => p.notify("Boost activated for this session")}/><Action icon={<ListChecks/>} label="Tasks" onClick={() => p.setPage("tasks")}/><Action icon={<Users/>} label="Invite" onClick={() => p.setPage("referral")}/>
+
+    <div className="grid grid-cols-4 gap-2.5">
+      <Quick icon={<Gift/>} label="Daily" onClick={()=>p.notify("Daily reward is ready")}/>
+      <Quick icon={<Zap/>} label="Boost" onClick={()=>p.setTab("mine")}/>
+      <Quick icon={<ListChecks/>} label="Tasks" onClick={()=>p.setTab("tasks")}/>
+      <Quick icon={<Users/>} label="Invite" onClick={()=>p.setTab("profile")}/>
     </div>
   </div>;
 }
 
-function MinePage(p:any) { return <div className="space-y-4"><h1 className="text-3xl font-extrabold">Mine PP Coin</h1><Card title="Mining Session"><Row a="Mining speed" b={`+${p.rate.toFixed(5)} PP/s`}/><Row a="Per minute" b={`+${(p.rate*60).toFixed(4)} PP/min`}/><Row a="Per hour" b={`+${(p.rate*3600).toFixed(2)} PP/hour`}/><button onClick={()=>p.setMining((v:boolean)=>!v)} className="mt-4 w-full rounded-xl bg-emerald-400 py-3 font-bold text-slate-950">{p.mining?"Pause":"Start"} Mining</button></Card><Card title="Mining Boosts"><Row a="⚡ Energy Boost" b="+10%"/><Row a="🎁 Daily Reward" b="+5 PP"/><Row a="📺 Watch Ads" b="+20%"/><button onClick={()=>p.setBoosted(true)} className="mt-4 w-full rounded-xl border border-emerald-400/30 bg-emerald-400/10 py-3 font-bold text-emerald-300">Activate 10% Boost</button></Card></div>; }
+function Mine(p:any) {
+  return <div className="space-y-5"><Title title="Mine PP Coin" sub="Manage your mining power and earning rate."/>
+    <section className="rounded-[28px] bg-gradient-to-br from-[#2868ed] to-[#174bc4] p-6 text-white shadow-lg shadow-blue-100">
+      <div className="flex justify-between"><div><p className="text-sm text-blue-100">Current Balance</p><b className="mt-1 block text-4xl">{p.balance.toFixed(6)} PP</b></div><Zap size={34}/></div>
+      <div className="mt-7 grid grid-cols-2 gap-3"><Mini title="Mining Speed" value={`+${p.speed.toFixed(5)} PP/s`}/><Mini title="Today" value={`${p.today.toFixed(4)} PP`}/></div>
+    </section>
+    <Card title="Mining Details"><Row a="Per minute" b={`+${(p.speed*60).toFixed(4)} PP`}/><Row a="Per hour" b={`+${(p.speed*3600).toFixed(2)} PP`}/><Row a="Status" b={p.mining?"Active":"Paused"}/></Card>
+    <Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card>
+    <button onClick={()=>p.setMining((v:boolean)=>!v)} className="w-full rounded-2xl bg-[#2868ed] py-3.5 font-bold text-white">{p.mining?"Pause Mining":"Start Mining"}</button>
+  </div>;
+}
 
-function TasksPage(p:any) { return <div className="space-y-4"><h1 className="text-3xl font-extrabold">Tasks</h1><p className="text-slate-400">Complete tasks and earn PP Coin.</p><Card title="Available Tasks"><Task icon={<Gift/>} title="Daily Check-in" text="Claim your daily reward" button={p.claimed?"Claimed":"+5 PP"} onClick={p.claimDaily}/><Task icon={<Zap/>} title="Activate Mining" text="Keep your mining session active" button={p.mining?"Active":"Start"} onClick={()=>p.setMining((v:boolean)=>!v)}/><Task icon={<Users/>} title="Invite a Friend" text="Share your referral link" button="Invite" onClick={p.shareReferral}/><Task icon={<Sparkles/>} title="Community Task" text="Visit the PointPro community" button="Open" onClick={()=>p.notify("Community task ready to connect")}/></Card></div>; }
+function Tasks(p:any) {
+  return <div className="space-y-5"><Title title="Tasks" sub="Complete tasks and earn more PP Coin."/>
+    <div className="flex gap-2 overflow-x-auto pb-1">{["Watch Ads","Daily Tasks","Social Tasks","Special"].map((x,i)=><span key={x} className={`whitespace-nowrap rounded-full border px-5 py-2.5 text-sm font-bold ${i===0?"border-[#2868ed] bg-[#2868ed] text-white":"border-slate-200 bg-white text-slate-500"}`}>{x}</span>)}</div>
+    <Card><Task icon={<Gift/>} title="Daily Check-in" text="Claim your daily reward" button="+5 PP" onClick={()=>p.notify("+5 PP reward claimed")}/><Task icon={<Zap/>} title="Mining Session" text="Keep your miner active" button={p.mining?"Active":"Start"} onClick={()=>p.setMining((v:boolean)=>!v)}/><Task icon={<Users/>} title="Invite a Friend" text="Share your PointPro referral link" button="Invite" onClick={p.share}/><Task icon={<Sparkles/>} title="Community Task" text="Connect with the PointPro community" button="Open" onClick={()=>p.notify("Community task coming soon")}/></Card>
+  </div>;
+}
 
-function ReferralPage(p:any) { return <div className="space-y-4"><h1 className="text-3xl font-extrabold">Referral</h1><p className="text-slate-400">Invite friends and grow your PP Coin rewards.</p><div className="rounded-3xl bg-gradient-to-br from-emerald-950 to-slate-900 p-6"><p className="text-slate-400">Your referral code</p><div className="mt-2 text-3xl font-extrabold text-emerald-400">PPUSER</div><p className="mt-3 text-sm text-slate-400">Referral reward: 20% of eligible in-app mining bonus</p></div><Card title="Referral Stats"><Row a="Total referrals" b="0"/><Row a="Active referrals" b="0"/><Row a="Referral earnings" b="0.000000 PP"/><div className="mt-4 rounded-xl bg-slate-800 p-3 text-xs text-slate-300">{APP_URL}/?ref=PPUSER</div><button onClick={p.copyReferral} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-400 py-3 font-bold text-slate-950"><Copy size={17}/> Copy Referral Link</button></Card></div>; }
+function Wallet(p:any) {
+  return <div className="space-y-5"><Title title="Wallet" sub="Your PP Coin balance and transactions."/>
+    <section className="rounded-[28px] bg-gradient-to-br from-[#2868ed] to-[#1e55d2] p-6 text-white shadow-lg shadow-blue-100"><p className="text-sm font-bold text-blue-100">POINTPRO WALLET</p><b className="mt-2 block text-4xl">{p.balance.toFixed(6)} PP</b><p className="mt-1 text-sm text-blue-100">≈ 0.00 USD</p><div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs"><div><b className="block text-base">{p.balance.toFixed(3)}</b>Total</div><div><b className="block text-base">{p.today.toFixed(3)}</b>Today</div><div><b className="block text-base">0</b>Transactions</div></div></section>
+    <div className="grid grid-cols-4 gap-2.5"><WalletAction icon={<ArrowDownToLine/>} label="Receive" onClick={()=>p.notify("Receive wallet address will be connected")}/><WalletAction icon={<ArrowUpFromLine/>} label="Send" onClick={()=>p.notify("Send will be connected to Supabase")}/><WalletAction icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>p.notify("Exchange module will be connected")}/><WalletAction icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>p.notify("Withdrawal module will be connected")}/></div>
+    <Card title="Recent Transactions"><div className="rounded-2xl bg-slate-50 p-5 text-center text-sm text-slate-400">No transactions yet</div></Card>
+  </div>;
+}
 
-function WalletPage({balance,today,tasks,notify}:any) { return <div className="space-y-4"><h1 className="text-3xl font-extrabold">Wallet</h1><div className="rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6"><p className="text-blue-100">PP COIN WALLET</p><div className="mt-2 text-4xl font-extrabold">{balance.toFixed(6)} PP</div><p className="mt-2 text-sm text-blue-100">In-app balance</p><div className="mt-5 grid grid-cols-3 gap-2 text-sm"><div>Total<br/><b>{balance.toFixed(4)}</b></div><div>Today<br/><b>{today.toFixed(4)}</b></div><div>Tasks<br/><b>{tasks}</b></div></div></div><div className="grid grid-cols-4 gap-2"><Action icon={<ArrowDownToLine/>} label="Receive" onClick={()=>notify("Receive will connect to Supabase wallet")}/><Action icon={<ArrowUpFromLine/>} label="Send" onClick={()=>notify("Send will connect to Supabase wallet")}/><Action icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>notify("Exchange will connect to backend")}/><Action icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>notify("Withdrawal will connect to backend")}/></div><Card title="Recent Transactions"><p className="text-sm text-slate-500">No transactions yet.</p></Card></div>; }
+function Profile(p:any) {
+  return <div className="space-y-5"><Title title="Profile" sub="Your PointPro account"/>
+    <section className="rounded-[28px] bg-gradient-to-br from-[#eff5ff] to-white p-5 shadow-sm ring-1 ring-slate-200"><div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-blue-100"><UserRound size={31} className="text-[#2868ed]"/></div><div><h2 className="text-xl font-black">PointPro Miner</h2><p className="text-sm text-slate-500">@ppuser</p></div><CheckCircle2 className="ml-auto text-[#2868ed]"/></div><div className="mt-5 rounded-2xl bg-slate-900 p-4 text-white"><p className="text-xs text-slate-400">Your Referral Code</p><b className="mt-1 block text-2xl text-emerald-400">{REFERRAL}</b><p className="mt-2 text-sm text-slate-400">Invite friends and earn referral rewards.</p></div></section>
+    <Card title="Referral"><Row a="Referral code" b={REFERRAL}/><Row a="Total referrals" b="0"/><Row a="Referral earnings" b="0.000000 PP"/><div className="mt-3 flex gap-2"><button onClick={p.copy} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#2868ed] py-3 font-bold text-white"><Copy size={16}/> Copy</button><button onClick={p.share} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 font-bold"><Share2 size={16}/> Share</button></div></Card>
+    <Card><MenuRow icon={<ShieldCheck/>} text="Security"/><MenuRow icon={<Bell/>} text="Notifications"/><MenuRow icon={<CircleHelp/>} text="Support"/></Card>
+  </div>;
+}
 
-function ProfilePage({balance}:any) { return <div className="space-y-4"><h1 className="text-3xl font-extrabold">Profile</h1><Card><div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-400/15"><CircleUserRound size={34} className="text-emerald-400"/></div><div><h2 className="text-xl font-bold">PointPro Miner</h2><p className="text-sm text-slate-500">@ppuser</p></div><CheckCircle2 className="ml-auto text-emerald-400"/></div><div className="mt-5"><Row a="Telegram ID" b="Not connected"/><Row a="Mining days" b="0 Days"/><Row a="Total earned" b={`${balance.toFixed(6)} PP`}/></div></Card><Card title="Account"><Row a="🔐 Security" b="›"/><Row a="🔔 Notifications" b="›"/><Row a="❓ Support" b="›"/></Card></div>; }
-
-function Stat({title,value}:any){return <div className="rounded-xl bg-slate-800/70 p-3"><small className="text-slate-500">{title}</small><strong className="mt-1 block text-sm">{value}</strong></div>}
-function Action({icon,label,onClick}:any){return <button onClick={onClick} className="flex flex-col items-center gap-2 rounded-2xl border border-slate-800 bg-[#101827] p-3 text-xs font-bold text-slate-300">{icon}{label}</button>}
-function Card({title,children}:any){return <section className="rounded-3xl border border-slate-800 bg-[#101827] p-5">{title&&<h2 className="mb-4 text-xl font-bold">{title}</h2>}{children}</section>}
-function Row({a,b}:any){return <div className="flex items-center justify-between border-b border-slate-800 py-3 text-sm last:border-0"><span className="text-slate-400">{a}</span><b>{b}</b></div>}
-function Task({icon,title,text,button,onClick}:any){return <div className="flex items-center gap-3 border-b border-slate-800 py-4 last:border-0"><div className="rounded-xl bg-emerald-400/10 p-3 text-emerald-400">{icon}</div><div className="min-w-0 flex-1"><b className="block">{title}</b><small className="text-slate-500">{text}</small></div><button onClick={onClick} className="rounded-lg bg-emerald-400 px-3 py-2 text-xs font-bold text-slate-950">{button}</button></div>}
+function Title({title,sub}:{title:string;sub:string}){return <div><h1 className="text-[30px] font-black tracking-tight">{title}</h1><p className="mt-1 text-sm text-slate-500">{sub}</p></div>}
+function Mini({title,value}:{title:string;value:string}){return <div className="rounded-2xl bg-white/10 p-3"><small className="text-xs text-blue-100">{title}</small><b className="mt-1 block text-sm">{value}</b></div>}
+function Quick({icon,label,onClick}:any){return <button onClick={onClick} className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-xs font-bold text-slate-600 shadow-sm">{icon}{label}</button>}
+function WalletAction({icon,label,onClick}:any){return <button onClick={onClick} className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-[11px] font-bold text-slate-600">{icon}{label}</button>}
+function Card({title,children}:any){return <section className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">{title&&<h2 className="mb-2 text-[20px] font-black">{title}</h2>}{children}</section>}
+function Row({a,b}:{a:string;b:string}){return <div className="flex items-center justify-between border-b border-slate-100 py-3.5 text-sm last:border-0"><span className="text-slate-500">{a}</span><b>{b}</b></div>}
+function Boost({name,value,active,onClick}:any){return <div className="flex items-center gap-3 border-b border-slate-100 py-3 last:border-0"><div className="rounded-xl bg-blue-50 p-2.5 text-[#2868ed]"><Zap size={18}/></div><div className="flex-1"><b>{name}</b><p className="text-xs text-slate-400">Increase mining power</p></div><button onClick={onClick} className={`rounded-xl px-3 py-2 text-xs font-bold ${active?"bg-emerald-50 text-emerald-600":"bg-[#2868ed] text-white"}`}>{active?"Active":value}</button></div>}
+function Task({icon,title,text,button,onClick}:any){return <div className="flex items-center gap-3 border-b border-slate-100 py-4 last:border-0"><div className="rounded-xl bg-blue-50 p-3 text-[#2868ed]">{icon}</div><div className="min-w-0 flex-1"><b className="block text-sm">{title}</b><small className="text-xs text-slate-400">{text}</small></div><button onClick={onClick} className="rounded-xl bg-[#2868ed] px-3 py-2 text-xs font-bold text-white">{button}</button></div>}
+function MenuRow({icon,text}:{icon:any;text:string}){return <button className="flex w-full items-center gap-3 border-b border-slate-100 py-4 text-left last:border-0"><span className="text-slate-500">{icon}</span><b className="flex-1 text-sm">{text}</b><ChevronRight size={18} className="text-slate-400"/></button>}
