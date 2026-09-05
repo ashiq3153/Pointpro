@@ -1,166 +1,125 @@
-<!DOCTYPE html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PointPro</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f9fd">
+<title>PointPro • PP Coin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#080d18;color:#fff;padding-bottom:82px}
-button{font:inherit;cursor:pointer}
-.header{height:68px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1d2638;background:#090f1b}
-.logo{font-size:25px;font-weight:800}.logo span{color:#35e58a}
-.telegram{border:0;background:#168dcc;color:#fff;border-radius:11px;padding:10px 14px;font-weight:700}
-.container{max-width:600px;margin:auto;padding:20px 16px}
-.page{display:none}.page.active{display:block}
-.welcome{margin-bottom:18px}.welcome p{color:#8792a8;font-size:13px;margin-bottom:5px}.welcome h1{font-size:25px}
-.balance{background:linear-gradient(135deg,#142b27,#101c29);border:1px solid #234439;border-radius:20px;padding:22px;margin-bottom:18px}
-.balance-title,.muted{color:#94a2b8;font-size:13px}.balance h2{font-size:34px;margin:8px 0 20px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini{background:#ffffff08;border-radius:12px;padding:12px}.mini small{display:block;color:#8290a7;margin-bottom:5px}.mini strong{font-size:15px}
-.card{background:#101725;border:1px solid #1e293d;border-radius:20px;padding:20px;margin-bottom:18px}
-.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.card-head h3{font-size:18px}
-.live,.badge{font-size:10px;color:#35e58a;background:#35e58a18;padding:6px 10px;border-radius:20px}
-.circle{width:225px;height:225px;margin:0 auto 18px;border-radius:50%;background:conic-gradient(#35e58a 0deg,#35e58a 245deg,#263147 245deg,#263147 360deg);display:flex;align-items:center;justify-content:center}
-.circle-in{width:181px;height:181px;border-radius:50%;background:#101725;display:flex;flex-direction:column;justify-content:center;align-items:center}.circle-in small{color:#8792a8}.circle-in strong{font-size:29px;margin:7px}.green{color:#35e58a}.note{text-align:center;color:#78849a;font-size:11px}
-.row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #202a3d}.row:last-child{border-bottom:0}.row small{color:#8490a5}
-.btn{width:100%;border:0;border-radius:11px;background:#35e58a;color:#06130d;padding:13px;font-weight:700;margin-top:14px}
-.plan{background:#101725;border:1px solid #263147;border-radius:18px;padding:20px;margin-bottom:14px}.plan.featured{border-color:#35e58a}.plan-top{display:flex;justify-content:space-between;align-items:center}.plan-name{font-size:20px;font-weight:700}.price{font-size:28px;font-weight:700;margin:15px 0 4px}.duration{font-size:12px;color:#7e8aa1}.info{background:#172033;border-radius:10px;padding:11px}.info small{display:block;color:#7f8ba1;margin-bottom:4px}.info strong{font-size:13px}
-.ref{background:#172033;padding:14px;border-radius:10px;margin:15px 0;font-size:12px;word-break:break-all}
-.bottom{position:fixed;left:0;right:0;bottom:0;height:72px;background:#0d1422;border-top:1px solid #202a3d;display:flex;justify-content:space-around;align-items:center;z-index:20}
-.nav{text-align:center;color:#657188;font-size:19px;cursor:pointer}.nav span{display:block;font-size:9px;margin-top:4px}.nav.active{color:#35e58a}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#172033;border:1px solid #33405a;padding:10px 14px;border-radius:10px;font-size:12px;display:none;z-index:50}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7f9fd;color:#101828;padding-bottom:88px}button{font:inherit;border:0;cursor:pointer}.top{height:64px;background:#172313;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}.brand{font-size:22px;font-weight:800}.brand b{color:#39e46f}.top .more{font-size:25px;background:transparent;color:#fff}.wrap{max-width:650px;margin:auto;padding:18px 16px}.page{display:none}.page.active{display:block}.hello{font-size:25px;font-weight:800;margin:6px 0 18px}.sub{color:#7b8495;font-size:13px}.coin-card{background:linear-gradient(135deg,#2864ed,#2d55d8);color:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 30px #2459df30;margin-bottom:16px}.coin-card .label{opacity:.85;font-size:14px}.coin{font-size:35px;font-weight:800;margin:9px 0}.usd{font-size:13px;opacity:.8}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.stat{background:#ffffff18;border:1px solid #ffffff18;border-radius:13px;padding:12px}.stat small{display:block;opacity:.8;font-size:11px;margin-bottom:5px}.stat strong{font-size:16px}.card{background:#fff;border:1px solid #e5eaf2;border-radius:22px;padding:18px;margin-bottom:16px;box-shadow:0 4px 16px #10213a08}.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.head h2{font-size:18px;margin:0}.pill{background:#e9f9ef;color:#16a05a;padding:7px 10px;border-radius:20px;font-size:11px;font-weight:700}.minebox{text-align:center;padding:4px 0 16px}.mine-circle{width:220px;height:220px;border-radius:50%;margin:4px auto 15px;background:conic-gradient(#2f6df6 0deg,#2f6df6 245deg,#e4e9f2 245deg,#e4e9f2 360deg);display:flex;align-items:center;justify-content:center}.mine-inner{width:178px;height:178px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}.mine-inner .bolt{font-size:30px}.mine-inner strong{font-size:25px;margin:5px}.blue{color:#2864ed}.green{color:#1aa862}.progress{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden;margin:12px 0}.progress i{display:block;height:100%;width:68%;background:#2f6df6;border-radius:20px}.btn{width:100%;padding:14px;border-radius:13px;background:#2864ed;color:#fff;font-weight:800}.btn.secondary{background:#eef3ff;color:#2864ed}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.action{background:#fff;border:1px solid #e3e8f1;border-radius:17px;padding:14px 5px;text-align:center;font-size:12px;font-weight:700}.action .ico{font-size:24px;display:block;margin-bottom:7px}.row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #edf0f5}.row:last-child{border-bottom:0}.muted{color:#7d8798}.task-tabs{display:flex;gap:8px;overflow:auto;margin:0 -2px 15px}.tab{white-space:nowrap;background:#fff;border:1px solid #e0e6ef;color:#697386;border-radius:22px;padding:10px 15px;font-weight:700}.tab.active{background:#2864ed;color:#fff;border-color:#2864ed}.task{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid #edf0f5}.task:last-child{border:0}.task-icon{width:46px;height:46px;border-radius:14px;background:#eef3ff;display:grid;place-items:center;font-size:23px}.task-body{flex:1}.task-body strong{display:block;font-size:14px}.task-body small{color:#8892a3}.claim{background:#2864ed;color:#fff;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:800}.claim.done{background:#e9f7ee;color:#1aa862}.wallet{background:linear-gradient(135deg,#2864ed,#3260e0);color:#fff;border-radius:24px;padding:22px;margin-bottom:16px}.wallet h1{font-size:32px;margin:8px 0}.wallet .minirow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.wallet .minirow div{background:#ffffff18;border-radius:11px;padding:9px;font-size:11px}.profile-card{text-align:center}.avatar{width:76px;height:76px;border-radius:50%;background:#e9f0ff;margin:5px auto 12px;display:grid;place-items:center;font-size:38px}.refcode{background:#111827;color:#fff;border-radius:18px;padding:18px}.refcode b{font-size:25px;color:#f6bd35}.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:#fff;border-top:1px solid #e2e7ef;display:flex;justify-content:space-around;align-items:center;z-index:30}.nav{width:20%;text-align:center;color:#8a94a5;font-size:21px;background:none}.nav span{display:block;font-size:10px;margin-top:4px}.nav.active{color:#2864ed}.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#172313;color:#fff;padding:11px 15px;border-radius:12px;display:none;z-index:50;font-size:12px}.small{font-size:11px;color:#8791a2}
+@media(max-width:380px){.mine-circle{width:195px;height:195px}.mine-inner{width:157px;height:157px}.grid4{gap:5px}.action{padding:11px 3px}}
 </style>
 </head>
 <body>
-<header class="header"><div class="logo">Point<span>Pro</span></div><button class="telegram" onclick="connectTelegram()">✈ Telegram</button></header>
+<header class="top"><div class="brand">Point<b>Pro</b></div><button class="more" onclick="connectTelegram()">✈</button></header>
 
-<main class="container">
+<main class="wrap">
 <section id="home" class="page active">
-<div class="welcome"><p>Welcome back 👋</p><h1 id="welcomeName">My Dashboard</h1><div id="tgStatus" class="muted" style="margin-top:7px"></div></div>
-<div class="balance"><div class="balance-title">Total Balance</div><h2>৳ <span id="balance">1,250.00</span></h2><div class="grid2"><div class="mini"><small>Today's Earnings</small><strong>৳48.75</strong></div><div class="mini"><small>This Month</small><strong>৳780.50</strong></div></div></div>
-<div class="card"><div class="card-head"><h3>24 Hour Earnings</h3><span class="live">● LIVE</span></div><div class="circle"><div class="circle-in"><small>Today's Earnings</small><strong>৳48.75</strong><span class="green">+৳0.03 / min</span></div></div><p class="note">24H Progress • 68%</p></div>
-<div class="card"><div class="card-head"><h3>Active Plan</h3><span class="live">ACTIVE</span></div><div class="row"><small>Package</small><strong>Standard</strong></div><div class="row"><small>Investment</small><strong>৳5,000</strong></div><button class="btn" onclick="showPage('plans',1)">View Plans</button></div>
-</section>
-
-<section id="plans" class="page">
-<div class="welcome"><p>Choose your package</p><h1>Plans</h1></div>
-
-<div class="plan featured" style="border-color:#35e58a;background:linear-gradient(135deg,#102b22,#101725)">
-  <div class="plan-top"><div class="plan-name">🆓 Free Plan</div><span class="badge">FREE</span></div>
-  <div class="price">৳0 <span class="muted" style="font-size:12px">no package fee</span></div>
-  <div class="duration">Free access • No investment required</div>
-  <div class="grid2" style="margin-top:18px">
-    <div class="info"><small>Access</small><strong>Free</strong></div>
-    <div class="info"><small>Status</small><strong class="green">Available</strong></div>
+  <div class="sub">Welcome back 👋</div>
+  <div class="hello" id="hello">PointPro Miner</div>
+  <div class="coin-card">
+    <div class="label">PP Coin Balance</div>
+    <div class="coin"><span id="balance">0.000000</span> PP</div>
+    <div class="usd">In-app PP Coin balance</div>
+    <div class="stats">
+      <div class="stat"><small>Today's mined</small><strong id="today">0.000000 PP</strong></div>
+      <div class="stat"><small>Mining speed</small><strong id="speed">+0.00124 PP/s</strong></div>
+    </div>
   </div>
-  <button class="btn" onclick="toast('Free Plan selected')">Select Free Plan</button>
-</div>
-
-<div class="card">
- <div class="card-head"><h3>Paid Packages</h3><span class="live">8 OPTIONS</span></div>
- <div class="muted">Package information and calculation view</div>
-</div>
-
-<div id="planList"></div>
-
-<div class="card">
- <div class="card-head"><h3>30 Day Calculator</h3><span class="live">CALCULATOR</span></div>
- <div class="muted">Select a package below to view its configured calculation.</div>
- <div class="grid2" style="margin-top:14px">
-  <div class="info"><small>Selected Package</small><strong id="calcPackage">৳1,000</strong></div>
-  <div class="info"><small>30-Day Calculation</small><strong id="calcReturn">৳300.00</strong></div>
- </div>
- <div class="info" style="margin-top:10px"><small>Per-minute calculation</small><strong id="calcMinute">৳0.006944 / min</strong></div>
-</div>
+  <div class="card">
+    <div class="head"><h2>Mining Status</h2><span class="pill" id="status">ACTIVE</span></div>
+    <div class="minebox">
+      <div class="mine-circle"><div class="mine-inner"><div class="bolt">⚡</div><strong id="liveBalance">0.000000 PP</strong><span class="blue small" id="miningText">Mining active</span></div></div>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="sub">24H progress • <b id="progressText">68%</b></div>
+    </div>
+    <button class="btn" id="mineBtn" onclick="toggleMining()">Pause Mining</button>
+  </div>
+  <div class="grid4">
+    <button class="action" onclick="claimDaily()"><span class="ico">🎁</span>Daily</button>
+    <button class="action" onclick="boost()"><span class="ico">⚡</span>Boost</button>
+    <button class="action" onclick="showPage('tasks',2)"><span class="ico">📋</span>Tasks</button>
+    <button class="action" onclick="showPage('referral',3)"><span class="ico">👥</span>Invite</button>
+  </div>
 </section>
+
+<section id="mine" class="page">
+  <div class="hello">Mine PP Coin</div>
+  <div class="card">
+    <div class="head"><h2>Mining Session</h2><span class="pill" id="mineStatus">ACTIVE</span></div>
+    <div class="row"><span class="muted">Mining speed</span><b>+0.00124 PP/s</b></div>
+    <div class="row"><span class="muted">Per minute</span><b>+0.0744 PP/min</b></div>
+    <div class="row"><span class="muted">Per hour</span><b>+4.464 PP/hour</b></div>
+    <div class="row"><span class="muted">24-hour rate</span><b>+107.136 PP/day</b></div>
+    <button class="btn" onclick="toggleMining()">Start / Pause Mining</button>
+  </div>
+  <div class="card">
+    <div class="head"><h2>Mining Boosts</h2><span class="pill">BONUS</span></div>
+    <div class="row"><span>⚡ Energy Boost</span><b>+10%</b></div>
+    <div class="row"><span>🎁 Daily Reward</span><b>+5 PP</b></div>
+    <div class="row"><span>📺 Watch Ads</span><b>+20%</b></div>
+    <button class="btn secondary" onclick="boost()">Activate 10% Boost</button>
+  </div>
+</section>
+
+<section id="tasks" class="page">
+  <div class="hello">Tasks</div><div class="sub" style="margin-bottom:14px">Complete tasks and earn PP Coin.</div>
+  <div class="task-tabs"><button class="tab active">All Tasks</button><button class="tab">Daily</button><button class="tab">Social</button></div>
+  <div class="card">
+    <div class="task"><div class="task-icon">🎁</div><div class="task-body"><strong>Daily Check-in</strong><small>Claim your daily reward</small></div><button class="claim" id="dailyBtn" onclick="claimDaily()">+5 PP</button></div>
+    <div class="task"><div class="task-icon">⚡</div><div class="task-body"><strong>Activate Mining</strong><small>Keep your mining session active</small></div><button class="claim" onclick="toggleMining()">Start</button></div>
+    <div class="task"><div class="task-icon">👥</div><div class="task-body"><strong>Invite a Friend</strong><small>Share your referral link</small></div><button class="claim" onclick="shareReferral()">Invite</button></div>
+    <div class="task"><div class="task-icon">📣</div><div class="task-body"><strong>Community Task</strong><small>Visit the PointPro community</small></div><button class="claim" onclick="toast('Community task can be connected later')">Open</button></div>
+  </div>
+</section>
+
 <section id="referral" class="page">
-<div class="welcome"><p>Invite friends & earn</p><h1>Referral</h1></div>
-<div class="card">
-  <div style="text-align:center;padding:10px 0 22px">
-    <div class="muted">Total Commission</div>
-    <h2 style="font-size:36px;margin-top:8px">৳350.00</h2>
-  </div>
-  <div class="row"><small>Total Referrals</small><strong id="totalReferrals">12</strong></div>
-  <div class="row"><small>Active Referrals</small><strong id="activeReferrals">8</strong></div>
-  <div class="row"><small>Referral Code</small><strong id="refCode">USER123</strong></div>
-  <div class="ref" id="refLink">https://pointpro-one.vercel.app/?ref=USER123</div>
-  <button class="btn" onclick="copyReferral()">📋 Copy Referral Link</button>
-  <button class="btn" style="background:#168dcc;color:#fff" onclick="shareReferral()">📤 Share on Telegram</button>
-</div>
-<div class="card">
-  <div class="card-head"><h3>How Referral Works</h3><span class="live">INFO</span></div>
-  <div class="row"><small>1</small><span>Copy your referral link</span></div>
-  <div class="row"><small>2</small><span>Share it with your friends</span></div>
-  <div class="row"><small>3</small><span>Referral activity appears here</span></div>
-</div>
+  <div class="hello">Referral</div><div class="sub" style="margin-bottom:14px">Invite friends and grow your PP Coin rewards.</div>
+  <div class="refcode"><div class="small" style="color:#c7cfdd">Your referral code</div><b id="refCode">PPUSER</b><div style="margin-top:10px;font-size:12px;color:#c7cfdd">Referral reward: 20% of eligible in-app mining bonus</div></div>
+  <div class="card" style="margin-top:16px"><div class="row"><span class="muted">Total referrals</span><b id="refs">0</b></div><div class="row"><span class="muted">Active referrals</span><b id="activeRefs">0</b></div><div class="row"><span class="muted">Referral earnings</span><b id="refEarn">0.000000 PP</b></div><div class="refcode" style="margin-top:15px;background:#f0f4fb;color:#344054"><span id="refLink">https://pointpro-one.vercel.app/?ref=PPUSER</span></div><button class="btn" style="margin-top:12px" onclick="copyReferral()">Copy Referral Link</button></div>
 </section>
 
-<section id="wallet" class="page"><div class="welcome"><p>Manage your funds</p><h1>Wallet</h1></div><div class="card"><div style="text-align:center;padding:12px 0 20px"><div class="muted">Available Balance</div><h2 style="font-size:36px;margin-top:8px">৳1,250.00</h2></div><button class="btn" onclick="toast('Deposit will be connected after payment backend is added')">Deposit</button><button class="btn" onclick="toast('Withdrawal will be connected after wallet backend is added')">Withdraw</button></div><div class="card"><div class="card-head"><h3>Recent Transactions</h3></div><div class="row"><span>Demo Earnings</span><strong class="green">+৳48.75</strong></div><div class="row"><span>Investment</span><strong>৳5,000</strong></div></div></section>
+<section id="wallet" class="page">
+  <div class="hello">Wallet</div>
+  <div class="wallet"><div class="small" style="color:#dbe5ff">PP COIN WALLET</div><h1 id="walletBalance">0.000000 PP</h1><div class="usd">PP Coin in-app balance</div><div class="minirow" style="margin-top:18px"><div>Total<br><b id="wTotal">0.000000</b></div><div>Today<br><b id="wToday">0.000000</b></div><div>Tasks<br><b id="wTasks">0</b></div></div></div>
+  <div class="grid4" style="margin-bottom:16px"><button class="action" onclick="toast('Receive address can be connected to your backend')"><span class="ico">↓</span>Receive</button><button class="action" onclick="toast('Send can be connected to your backend')"><span class="ico">↑</span>Send</button><button class="action" onclick="toast('Exchange can be connected to your backend')"><span class="ico">⇄</span>Exchange</button><button class="action" onclick="toast('Withdrawal requires a connected payment backend')"><span class="ico">↗</span>Withdraw</button></div>
+  <div class="card"><div class="head"><h2>Recent Transactions</h2></div><div id="tx"><div class="sub">No transactions yet.</div></div></div>
+</section>
 
-<section id="profile" class="page"><div class="welcome"><p>Account</p><h1>My Profile</h1></div><div class="card"><div style="text-align:center;padding:10px 0 20px"><div style="font-size:55px">👤</div><h2 style="font-size:22px;margin-top:8px">PointPro User</h2><div class="muted" style="margin-top:5px">Telegram account</div></div><div class="row"><small>User ID</small><strong id="userId">—</strong></div><div class="row"><small>Username</small><strong id="username">—</strong></div><div class="row"><small>Status</small><strong id="accountStatus" class="green">Demo</strong></div></div></section>
+<section id="profile" class="page">
+  <div class="hello">Profile</div>
+  <div class="card profile-card"><div class="avatar">👤</div><h2 id="profileName">PointPro Miner</h2><div class="sub" id="profileUser">@ppuser</div><div class="row" style="margin-top:12px"><span class="muted">Telegram ID</span><b id="tgId">Not connected</b></div><div class="row"><span class="muted">Mining days</span><b id="days">0 Days</b></div><div class="row"><span class="muted">Total earned</span><b id="earned">0.000000 PP</b></div></div>
+  <div class="card"><div class="head"><h2>Account</h2></div><div class="row"><span>🔐 Security</span><span>›</span></div><div class="row"><span>🔔 Notifications</span><span>›</span></div><div class="row"><span>❓ Support</span><span>›</span></div></div>
+</section>
 </main>
 
-<nav class="bottom"><div class="nav active" onclick="showPage('home',0)">🏠<span>Home</span></div><div class="nav" onclick="showPage('plans',1)">💰<span>Plans</span></div><div class="nav" onclick="showPage('referral',2)">👥<span>Referral</span></div><div class="nav" onclick="showPage('wallet',3)">💳<span>Wallet</span></div><div class="nav" onclick="showPage('profile',4)">👤<span>Profile</span></div></nav>
+<nav class="bottom">
+<button class="nav active" onclick="showPage('home',0)">⌂<span>Home</span></button>
+<button class="nav" onclick="showPage('mine',1)">⚡<span>Mine</span></button>
+<button class="nav" onclick="showPage('tasks',2)">▣<span>Tasks</span></button>
+<button class="nav" onclick="showPage('wallet',3)">▤<span>Wallet</span></button>
+<button class="nav" onclick="showPage('profile',4)">♙<span>Profile</span></button>
+</nav>
 <div id="toast" class="toast"></div>
 
 <script>
-const plans=[100,500,1000,2000,5000,10000,50000,100000];
-function money(n){return '৳'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function renderPlans(){
- const box=document.getElementById('planList');
- box.innerHTML=plans.map((amount)=>{
-  const monthly=amount*.30,daily=amount*.01,minute=daily/1440;
-  return '<div class="plan '+(amount===5000?'featured':'')+'"><div class="plan-top"><div class="plan-name">'+money(amount).replace('.00','')+'</div><span class="badge">'+(amount===5000?'POPULAR':'30 DAYS')+'</span></div><div class="price">'+money(monthly)+' <span class="muted" style="font-size:12px">configured 30-day calculation</span></div><div class="duration">Package amount • 30 days</div><div class="grid2" style="margin-top:18px"><div class="info"><small>Daily calculation</small><strong>'+money(daily)+'</strong></div><div class="info"><small>Per-minute calculation</small><strong>'+money(minute)+'</strong></div></div><button class="btn" onclick="selectPlan('+amount+')">View Calculation</button></div>';
- }).join('');
-}
-function selectPlan(amount){
- const monthly=amount*.30,daily=amount*.01,minute=daily/1440;
- document.getElementById('calcPackage').textContent=money(amount).replace('.00','');
- document.getElementById('calcReturn').textContent=money(monthly);
- document.getElementById('calcMinute').textContent=money(minute)+' / min';
- toast('Calculation loaded for '+money(amount).replace('.00',''));
-}
-renderPlans();
-function showPage(page,index){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));document.querySelectorAll('.nav')[index].classList.add('active');window.scrollTo(0,0)}
-function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>el.style.display='none',2500)}
-function copyReferral(){
- const text=document.getElementById('refLink').textContent.trim();
- if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('Referral link copied ✓')).catch(()=>toast(text));}
- else toast(text);
-}
-function shareReferral(){
- const link=document.getElementById('refLink').textContent.trim();
- const text='Join PointPro with my referral link: '+link;
- if(window.Telegram && Telegram.WebApp && Telegram.WebApp.openTelegramLink){
-   Telegram.WebApp.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join PointPro with my referral link'));
- }else{
-   window.open('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(text),'_blank');
- }
-}
-
-async function connectTelegram(){
-  if(!window.Telegram || !Telegram.WebApp){ toast('Telegram Web App থেকে খুলুন'); return; }
-  Telegram.WebApp.ready(); Telegram.WebApp.expand();
-  const initData=Telegram.WebApp.initData;
-  if(!initData){ toast('Telegram user data পাওয়া যায়নি'); return; }
-  try{
-    const res=await fetch('/api/telegram-user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
-    const data=await res.json();
-    if(!res.ok) throw new Error(data.error||'Verification failed');
-    const u=data.user;
-    document.getElementById('welcomeName').textContent='Hi, '+(u.first_name||'User')+' 👋';
-    document.getElementById('tgStatus').textContent='Telegram account connected';
-    document.getElementById('userId').textContent=u.id;
-    document.getElementById('username').textContent=u.username?'@'+u.username:'Not set';
-    document.getElementById('accountStatus').textContent='Connected';
-    toast('Telegram connected ✓');
-  }catch(e){toast('Telegram verification failed');}
-}
-if(window.Telegram && Telegram.WebApp){
-  Telegram.WebApp.ready();
-  if(Telegram.WebApp.initData) connectTelegram();
-}
+const KEY='pointpro_pp_state_v2';
+let state=JSON.parse(localStorage.getItem(KEY)||'null')||{balance:0,today:0,started:Date.now(),mining:true,last:Date.now(),daily:null,boost:1,tx:[],refs:0,tasks:0};
+const RATE=.00124;
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function accrue(){const now=Date.now();if(state.mining){const sec=Math.max(0,(now-state.last)/1000);const gain=sec*RATE*state.boost;state.balance+=gain;state.today+=gain}state.last=now;save()}
+function fmt(n){return Number(n||0).toFixed(6)}
+function render(){accrue();document.getElementById('balance').textContent=fmt(state.balance);document.getElementById('liveBalance').textContent=fmt(state.balance)+' PP';document.getElementById('today').textContent=fmt(state.today)+' PP';document.getElementById('walletBalance').textContent=fmt(state.balance)+' PP';document.getElementById('wTotal').textContent=fmt(state.balance);document.getElementById('wToday').textContent=fmt(state.today);document.getElementById('earned').textContent=fmt(state.balance)+' PP';document.getElementById('wTasks').textContent=state.tasks;document.getElementById('refs').textContent=state.refs;document.getElementById('activeRefs').textContent=state.refs;document.getElementById('status').textContent=state.mining?'ACTIVE':'PAUSED';document.getElementById('mineStatus').textContent=state.mining?'ACTIVE':'PAUSED';document.getElementById('mineBtn').textContent=state.mining?'Pause Mining':'Start Mining';document.getElementById('miningText').textContent=state.mining?'Mining active':'Mining paused';}
+function showPage(id,i){accrue();document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav')[i].classList.add('active');scrollTo(0,0);render()}
+function toggleMining(){accrue();state.mining=!state.mining;state.last=Date.now();save();render();toast(state.mining?'Mining started ⚡':'Mining paused')}
+function boost(){accrue();state.boost=state.boost===1?1.1:1;state.last=Date.now();save();render();toast(state.boost>1?'10% mining boost activated':'Boost reset')}
+function claimDaily(){const d=new Date().toDateString();if(state.daily===d){toast('Daily reward already claimed');return}accrue();state.daily=d;state.balance+=5;state.today+=5;state.tasks++;state.tx.unshift({t:'Daily reward',a:5});save();render();toast('+5 PP Coin claimed 🎁')}
+function copyReferral(){const l=document.getElementById('refLink').textContent;if(navigator.clipboard)navigator.clipboard.writeText(l).then(()=>toast('Referral link copied ✓'));else toast(l)}
+function shareReferral(){const l=document.getElementById('refLink').textContent;const text='Join PointPro and earn PP Coin: '+l;const u='https://t.me/share/url?url='+encodeURIComponent(l)+'&text='+encodeURIComponent(text);if(window.Telegram?.WebApp?.openTelegramLink)Telegram.WebApp.openTelegramLink(u);else window.open(u,'_blank')}
+function toast(m){const x=document.getElementById('toast');x.textContent=m;x.style.display='block';clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.style.display='none',2200)}
+async function connectTelegram(){if(!window.Telegram?.WebApp){toast('Open PointPro inside Telegram to connect');return}Telegram.WebApp.ready();Telegram.WebApp.expand();const u=Telegram.WebApp.initDataUnsafe?.user;if(!u){toast('Telegram user data not available');return}document.getElementById('hello').textContent='Hello, '+(u.first_name||'Miner')+' 👋';document.getElementById('profileName').textContent=(u.first_name||'PointPro Miner')+(u.last_name?' '+u.last_name:'');document.getElementById('profileUser').textContent=u.username?'@'+u.username:'Telegram user';document.getElementById('tgId').textContent=u.id;document.getElementById('refCode').textContent='PP'+String(u.id).slice(-8);document.getElementById('refLink').textContent='https://pointpro-one.vercel.app/?ref=PP'+String(u.id).slice(-8);toast('Telegram connected ✓')}
+render();setInterval(render,1000);if(window.Telegram?.WebApp?.initDataUnsafe?.user)connectTelegram();
 </script>
 </body>
 </html>
