@@ -32,11 +32,11 @@
 
 <!-- Industrial mining engine -->
 <g transform="translate(42 72)">
- <rect x="0" y="0" width="330" height="365" rx="28" fill="url(#steel)" stroke="#60758b" stroke-width="3"/>
+ <rect x="-8" y="-8" width="346" height="381" rx="34" fill="#020812" opacity=".55" filter="url(#soft)"/><rect x="0" y="0" width="330" height="365" rx="28" fill="url(#steel)" stroke="#8aa0b8" stroke-width="3"/>
  <rect x="12" y="12" width="306" height="341" rx="21" fill="none" stroke="#8aa0b8" stroke-opacity=".16" stroke-width="2"/>
  <circle cx="27" cy="27" r="5" fill="#27df78" class="pulse"/><circle cx="303" cy="27" r="5" fill="#2f70f4" class="pulse p2"/>
  <text x="165" y="48" fill="#f7fbff" font-family="Arial,sans-serif" font-size="22" font-weight="900" text-anchor="middle">PP MINING ENGINE</text>
- <text x="165" y="70" fill="#8fa8c4" font-family="Arial,sans-serif" font-size="11" letter-spacing="2" text-anchor="middle">HIGH PERFORMANCE • LIVE CORE</text>
+ <text x="165" y="70" fill="#8fa8c4" font-family="Arial,sans-serif" font-size="11" letter-spacing="2" text-anchor="middle">HIGH PERFORMANCE • LIVE CORE</text><path d="M24 82H306" stroke="#8aa0b8" stroke-opacity=".18"/><circle cx="28" cy="95" r="3" fill="#27df78" class="pulse"/><text x="38" y="99" fill="#6f8ba8" font-family="Arial,sans-serif" font-size="8" letter-spacing="1.2">CORE TEMP 42°C</text><circle cx="282" cy="95" r="3" fill="#3c9bff" class="pulse p2"/><text x="292" y="99" text-anchor="end" fill="#6f8ba8" font-family="Arial,sans-serif" font-size="8" letter-spacing="1.2">99.8% UPTIME</text>
 
  <!-- reactor window -->
  <rect x="42" y="96" width="246" height="118" rx="18" fill="#050b13" stroke="#35516f" stroke-width="3"/>
@@ -44,9 +44,11 @@
  <circle cx="103" cy="154" r="28" fill="#0d2947" stroke="#2f70f4" stroke-width="4"/>
  <circle cx="227" cy="154" r="28" fill="#0d2947" stroke="#2f70f4" stroke-width="4"/>
  <circle cx="103" cy="154" r="10" fill="#48a6ff" opacity=".65" class="pulse"/>
- <circle cx="227" cy="154" r="10" fill="#48a6ff" opacity=".65" class="pulse p2"/>
+ <circle cx="227" cy="154" r="10" fill="#48a6ff" opacity=".65" class="pulse p2"/><path d="M78 184h50M202 184h50" stroke="#2d5477" stroke-width="2"/><circle cx="75" cy="118" r="4" fill="#27df78" class="pulse p3"/><circle cx="255" cy="118" r="4" fill="#ff4557" class="signal s2"/><path d="M75 127v14M255 127v14" stroke="#6b8298" stroke-width="2" opacity=".6"/>
  <path d="M132 154h66" stroke="#4db0ff" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
  <path d="M150 128v52M178 128v52" stroke="#1d5ca0" stroke-width="2" opacity=".55"/>
+
+ <rect x="58" y="112" width="214" height="3" rx="2" fill="#27df78" opacity=".7" class="scan" filter="url(#glow)"/>
 
  <!-- status / four signal lights -->
  <rect x="42" y="232" width="246" height="92" rx="16" fill="#07111e" stroke="#304b67"/>
@@ -69,9 +71,12 @@
  </g>
 </g>
 
+<!-- Engine output throat -->
+<g transform="translate(300 345)"><path d="M0 0h58l18 22v34H0z" fill="#101c29" stroke="#60758b" stroke-width="3"/><path d="M12 12h38l10 12v18H12z" fill="#06101c" stroke="#2f70f4" stroke-width="2"/><circle cx="26" cy="33" r="5" fill="#27df78" class="pulse"/><circle cx="49" cy="33" r="5" fill="#3c9bff" class="pulse p2"/></g>
+
 <!-- Conveyor -->
 <g transform="translate(325 340)">
- <rect x="0" y="0" width="535" height="96" rx="24" fill="url(#steel2)" stroke="#5b7189" stroke-width="3"/>
+ <rect x="-6" y="-6" width="547" height="108" rx="28" fill="#000812" opacity=".5" filter="url(#soft)"/><rect x="0" y="0" width="535" height="96" rx="24" fill="url(#steel2)" stroke="#7890a8" stroke-width="3"/>
  <rect x="18" y="18" width="499" height="54" rx="14" fill="url(#belt)" stroke="#263a50" stroke-width="2"/>
  <g class="beltMove" opacity=".9">
   <path d="M10 45h36M82 45h36M154 45h36M226 45h36M298 45h36M370 45h36M442 45h36M514 45h36" stroke="#ffc928" stroke-width="7" stroke-linecap="round"/>
@@ -82,11 +87,11 @@
  <g class="roller" style="animation-delay:-.25s">
   <circle cx="492" cy="84" r="17" fill="#111a25" stroke="#61778c" stroke-width="3"/><path d="M492 72v24M480 84h24" stroke="#72879a" stroke-width="2"/>
  </g>
- <text x="268" y="31" fill="#8fa8c4" font-family="Arial,sans-serif" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="2">LIVE COLLECTION CONVEYOR</text>
+ <text x="268" y="31" fill="#8fa8c4" font-family="Arial,sans-serif" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="2">LIVE COLLECTION CONVEYOR</text><path d="M22 63H513" stroke="#50677d" stroke-opacity=".45"/><circle cx="105" cy="82" r="3" fill="#27df78" class="pulse"/><circle cx="135" cy="82" r="3" fill="#27df78" class="pulse p2"/><circle cx="165" cy="82" r="3" fill="#27df78" class="pulse p3"/>
 </g>
 
 <!-- Coins -->
-<g class="coin"><circle cx="340" cy="385" r="31" fill="url(#gold)" stroke="#fff2a0" stroke-width="3"/><circle cx="340" cy="385" r="23" fill="none" stroke="#c88700" stroke-opacity=".55"/><text x="340" y="395" fill="#7a4b00" font-family="Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">PP</text></g>
+<g class="coin"><circle cx="340" cy="385" r="31" fill="url(#gold)" stroke="#fff2a0" stroke-width="3"/><circle cx="340" cy="385" r="23" fill="none" stroke="#c88700" stroke-opacity=".55"/><text x="340" y="395" fill="#7a4b00" font-family="Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">PP</text><path d="M323 370A23 23 0 0 1 343 364" fill="none" stroke="#fff7b0" stroke-width="4" stroke-linecap="round" opacity=".75"/></g>
 <g class="coin c2"><circle cx="340" cy="385" r="31" fill="url(#gold)" stroke="#fff2a0" stroke-width="3"/><circle cx="340" cy="385" r="23" fill="none" stroke="#c88700" stroke-opacity=".55"/><text x="340" y="395" fill="#7a4b00" font-family="Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">PP</text></g>
 <g class="coin c3"><circle cx="340" cy="385" r="31" fill="url(#gold)" stroke="#fff2a0" stroke-width="3"/><circle cx="340" cy="385" r="23" fill="none" stroke="#c88700" stroke-opacity=".55"/><text x="340" y="395" fill="#7a4b00" font-family="Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">PP</text></g>
 <g class="coin c4"><circle cx="340" cy="385" r="31" fill="url(#gold)" stroke="#fff2a0" stroke-width="3"/><circle cx="340" cy="385" r="23" fill="none" stroke="#c88700" stroke-opacity=".55"/><text x="340" y="395" fill="#7a4b00" font-family="Arial,sans-serif" font-size="24" font-weight="900" text-anchor="middle">PP</text></g>
@@ -111,6 +116,9 @@
   <circle cx="215" cy="0" r="5" fill="#27df78"/><text x="225" y="4" fill="#a9bdd2" font-family="Arial,sans-serif" font-size="9">GREEN</text>
  </g>
 </g>
+
+<!-- Floating live state -->
+<g transform="translate(388 28)"><rect x="0" y="0" width="145" height="36" rx="18" fill="#061321" stroke="#315372"/><circle cx="18" cy="18" r="5" fill="#27df78" class="pulse"/><text x="31" y="22" fill="#dcecff" font-family="Arial,sans-serif" font-size="10" font-weight="800" letter-spacing="1">ENGINE ONLINE</text></g>
 
 <!-- Collection stats -->
 <g transform="translate(565 326)">
