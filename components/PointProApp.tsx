@@ -38,15 +38,26 @@ export default function PointProApp(){
 function HomePage({p}:any){return <div className="space-y-5">
  <div className="flex items-start justify-between"><div><p className="text-[15px] text-[#8993a6]">Welcome back 👋</p><h1 className="mt-1 text-[30px] font-black tracking-tight">My Dashboard</h1></div><button onClick={()=>p.notify("No new notifications")} className="rounded-full bg-white p-3 shadow-[0_8px_25px_rgba(31,51,86,.09)]"><Bell size={20}/></button></div>
 
- <section className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-[#2563eb] via-[#2868ed] to-[#123da8] p-6 text-white shadow-[0_20px_45px_rgba(37,99,235,.24)]">
-  <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/10 blur-2xl"/>
-  <div className="absolute right-0 top-0 opacity-20"><img src="/pp-coin-stack.svg" className="w-48"/></div>
-  <div className="relative flex items-center justify-between"><p className="text-sm font-semibold text-blue-100">PP Coin Balance</p><span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-bold backdrop-blur"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#27df78]"/> LIVE</span></div>
-  <div className="relative mt-2 flex items-end gap-2"><div className="text-[39px] font-black tabular-nums tracking-tight">{p.balance.toFixed(6)}</div><span className="mb-1.5 text-lg font-bold text-blue-100">PP</span></div>
-  <p className="relative text-sm text-blue-100">≈ $0.00 USD • Live Rate</p>
-  <div className="relative mt-6 grid grid-cols-2 gap-3"><Mini title="Today's Earnings" value={"+"+p.today.toFixed(4)+" PP"}/><Mini title="Mining Speed" value={"+"+p.speed.toFixed(5)+"/sec"}/></div>
+
+
+
+
+ <section className="rounded-[30px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]">
+  <div className="flex items-center justify-between"><div><h2 className="text-[21px] font-black">Mining Status</h2><p className="mt-0.5 text-xs text-[#8993a6]">Your miner is running in real time</p></div><span className={`rounded-full px-3 py-1.5 text-[11px] font-bold ${p.mining?"bg-[#e8fff3] text-[#20b96c]":"bg-[#f0f2f6] text-[#8993a6]"}`}>{p.mining?"● Active":"Paused"}</span></div>
+  <div className="mt-5 flex items-center gap-5">
+   <div className="relative grid h-32 w-32 shrink-0 place-items-center rounded-full p-1" style={{background:`conic-gradient(#2f70f4 ${Math.max(4,p.progress)}%,#e8edf5 0)`}}>
+    <div className="grid h-full w-full place-items-center rounded-full bg-white text-center"><div><Zap className={`mx-auto ${p.mining?"text-[#2f70f4]":"text-[#8993a6]"}`} size={23}/><b className="mt-1 block text-lg tabular-nums">{p.balance.toFixed(3)}</b><small className="text-[9px] text-[#8993a6]">PP COIN</small></div></div>
+   </div>
+   <div className="flex-1"><p className="text-sm text-[#8993a6]">Current Mining Rate</p><b className="text-2xl tabular-nums">+{p.speed.toFixed(5)} <span className="text-sm">PP/s</span></b><p className="mt-2 text-xs text-[#8993a6]">24H Progress • {p.progress}%</p></div>
+  </div>
+  <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#e8edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#2868ed] to-[#55a5ff] transition-[width] duration-700" style={{width:`${Math.max(3,p.progress)}%`}}/></div>
+  <button onClick={()=>p.setMining((v:boolean)=>!v)} className={`mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-bold text-white shadow-[0_10px_20px_rgba(47,112,244,.2)] ${p.mining?"bg-[#2f70f4]":"bg-[#18243b]"}`}>{p.mining?<><Pause size={17}/> Pause Mining</>:<><Play size={17}/> Start Mining</>}</button>
  </section>
 
+ <div className="grid grid-cols-4 gap-2.5"><Quick icon={<Gift/>} label="Daily" onClick={()=>p.notify("Daily reward is ready")}/><Quick icon={<Zap/>} label="Boost" onClick={()=>p.setTab("mine")}/><Quick icon={<ListChecks/>} label="Tasks" onClick={()=>p.setTab("tasks")}/><Quick icon={<Users/>} label="Invite" onClick={()=>p.setTab("profile")}/></div>
+ </div>}
+
+function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP Coin" sub="Your mining control center"/>
  <section className="overflow-hidden rounded-[30px] bg-[#071426] shadow-[0_18px_45px_rgba(7,20,38,.24)]">
   <div className="relative aspect-[16/10] w-full overflow-hidden">
    <img src="/pp-mining.svg" alt="PP Coin mining machine" className="absolute inset-0 h-full w-full object-cover" />
@@ -79,24 +90,7 @@ function HomePage({p}:any){return <div className="space-y-5">
    <div className="border-x border-white/10"><span className="block text-slate-400">Per Minute</span><b className="text-white">+{(p.speed*60).toFixed(4)} PP</b></div>
    <div><span className="block text-slate-400">24H Progress</span><b className="text-[#27df78]">{p.progress}%</b></div>
   </div>
- </section>
-
- <section className="rounded-[30px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]">
-  <div className="flex items-center justify-between"><div><h2 className="text-[21px] font-black">Mining Status</h2><p className="mt-0.5 text-xs text-[#8993a6]">Your miner is running in real time</p></div><span className={`rounded-full px-3 py-1.5 text-[11px] font-bold ${p.mining?"bg-[#e8fff3] text-[#20b96c]":"bg-[#f0f2f6] text-[#8993a6]"}`}>{p.mining?"● Active":"Paused"}</span></div>
-  <div className="mt-5 flex items-center gap-5">
-   <div className="relative grid h-32 w-32 shrink-0 place-items-center rounded-full p-1" style={{background:`conic-gradient(#2f70f4 ${Math.max(4,p.progress)}%,#e8edf5 0)`}}>
-    <div className="grid h-full w-full place-items-center rounded-full bg-white text-center"><div><Zap className={`mx-auto ${p.mining?"text-[#2f70f4]":"text-[#8993a6]"}`} size={23}/><b className="mt-1 block text-lg tabular-nums">{p.balance.toFixed(3)}</b><small className="text-[9px] text-[#8993a6]">PP COIN</small></div></div>
-   </div>
-   <div className="flex-1"><p className="text-sm text-[#8993a6]">Current Mining Rate</p><b className="text-2xl tabular-nums">+{p.speed.toFixed(5)} <span className="text-sm">PP/s</span></b><p className="mt-2 text-xs text-[#8993a6]">24H Progress • {p.progress}%</p></div>
-  </div>
-  <div className="mt-5 h-2 overflow-hidden rounded-full bg-[#e8edf5]"><div className="h-full rounded-full bg-gradient-to-r from-[#2868ed] to-[#55a5ff] transition-[width] duration-700" style={{width:`${Math.max(3,p.progress)}%`}}/></div>
-  <button onClick={()=>p.setMining((v:boolean)=>!v)} className={`mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-bold text-white shadow-[0_10px_20px_rgba(47,112,244,.2)] ${p.mining?"bg-[#2f70f4]":"bg-[#18243b]"}`}>{p.mining?<><Pause size={17}/> Pause Mining</>:<><Play size={17}/> Start Mining</>}</button>
- </section>
-
- <div className="grid grid-cols-4 gap-2.5"><Quick icon={<Gift/>} label="Daily" onClick={()=>p.notify("Daily reward is ready")}/><Quick icon={<Zap/>} label="Boost" onClick={()=>p.setTab("mine")}/><Quick icon={<ListChecks/>} label="Tasks" onClick={()=>p.setTab("tasks")}/><Quick icon={<Users/>} label="Invite" onClick={()=>p.setTab("profile")}/></div>
- </div>}
-
-function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP Coin" sub="Your mining control center"/><section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#194fc9] p-6 text-white"><img src="/pp-coin-stack.svg" className="absolute -right-6 bottom-0 w-44 opacity-90"/><p className="text-sm text-blue-100">PP Coin Balance</p><b className="mt-1 block text-4xl">{p.balance.toFixed(6)} PP</b><p className="mt-6 text-sm text-blue-100">Mining power</p><b className="text-xl">+{p.speed.toFixed(5)} PP / sec</b></section><Card title="Mining Statistics"><Row a="Per minute" b={`+${(p.speed*60).toFixed(4)} PP`}/><Row a="Per hour" b={`+${(p.speed*3600).toFixed(2)} PP`}/><Row a="Per day" b={`+${(p.speed*86400).toFixed(2)} PP`}/><Row a="Mining status" b={p.mining?"Active":"Paused"}/></Card><Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card></div>}
+ </section><section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#194fc9] p-6 text-white"><img src="/pp-coin-stack.svg" className="absolute -right-6 bottom-0 w-44 opacity-90"/><p className="text-sm text-blue-100">PP Coin Balance</p><b className="mt-1 block text-4xl">{p.balance.toFixed(6)} PP</b><p className="mt-6 text-sm text-blue-100">Mining power</p><b className="text-xl">+{p.speed.toFixed(5)} PP / sec</b></section><Card title="Mining Statistics"><Row a="Per minute" b={`+${(p.speed*60).toFixed(4)} PP`}/><Row a="Per hour" b={`+${(p.speed*3600).toFixed(2)} PP`}/><Row a="Per day" b={`+${(p.speed*86400).toFixed(2)} PP`}/><Row a="Mining status" b={p.mining?"Active":"Paused"}/></Card><Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card></div>}
 
 function Tasks({p}:any){return <div className="space-y-5"><Title title="Tasks" sub="Complete tasks and earn more PP Coin."/><div className="flex gap-2 overflow-x-auto pb-1">{["Watch Ads","Daily Tasks","Social Tasks","Special"].map((x,i)=><span key={x} className={`whitespace-nowrap rounded-full border px-5 py-2.5 text-sm font-bold ${i===0?"border-[#2f70f4] bg-[#2f70f4] text-white":"border-[#e4e8f0] bg-white text-[#8993a6]"}`}>{x}</span>)}</div><Card><Task icon={<Gift/>} title="Daily Check-in" text="Claim your daily reward" button="+5 PP" onClick={()=>p.notify("+5 PP reward claimed")}/><Task icon={<Zap/>} title="Mining Session" text="Keep your miner active" button={p.mining?"Active":"Start"} onClick={()=>p.setMining((v:boolean)=>!v)}/><Task icon={<Users/>} title="Invite a Friend" text="Share your PointPro referral link" button="Invite" onClick={p.share}/><Task icon={<Sparkles/>} title="Community Task" text="Connect with the PointPro community" button="Open" onClick={()=>p.notify("Community task coming soon")}/></Card></div>}
 
