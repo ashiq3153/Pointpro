@@ -89,19 +89,11 @@ function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP C
     <div className="mt-0.5 text-base font-black tabular-nums">{p.balance.toFixed(6)} <span className="text-xs text-[#55e5ff]">PP</span></div>
    </div>
 
-   <div className="pointer-events-none absolute bottom-[12%] left-[39%] h-16 w-20">
-    {p.mining&&<><span className="pp-coin-fly pp-c1">PP</span><span className="pp-coin-fly pp-c2">PP</span><span className="pp-coin-fly pp-c3">PP</span><span className="pp-coin-fly pp-c4">PP</span><span className="pp-coin-fly pp-c5">PP</span></>}
-   </div>
    <div className="pointer-events-none absolute bottom-[7%] left-[50%] h-7 w-7 rounded-full bg-[#ffd43b]/30 blur-md"/>
    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-[#071426]/90 px-4 py-1.5 text-[10px] font-bold text-slate-200 shadow-lg backdrop-blur-md">
     <span className="mr-1 text-[#27df78]">●</span> Live coin collection
    </div>
-   <style jsx>{`
-    .pp-coin-fly{position:absolute;left:0;bottom:0;display:grid;place-items:center;width:31px;height:31px;border-radius:9999px;background:radial-gradient(circle at 35% 25%,#fff7bd 0,#ffd94a 38%,#f2a900 72%,#c97800 100%);border:2px solid #ffe98a;color:#7a4b00;font:900 10px/1 Arial,sans-serif;box-shadow:0 0 16px rgba(255,211,55,.65),inset 0 0 5px rgba(255,255,255,.7);animation:ppFly 2.4s cubic-bezier(.25,.65,.35,1) infinite}
-    .pp-c2{animation-delay:.48s}.pp-c3{animation-delay:.96s}.pp-c4{animation-delay:1.44s}.pp-c5{animation-delay:1.92s}
-    @keyframes ppFly{0%{transform:translate(0,20px) scale(.45) rotate(-18deg);opacity:0}10%{opacity:1}38%{transform:translate(58px,0) scale(1) rotate(8deg);opacity:1}72%{transform:translate(128px,-10px) scale(.92) rotate(-8deg);opacity:.95}100%{transform:translate(205px,-2px) scale(.65) rotate(18deg);opacity:0}}
-    @media(prefers-reduced-motion:reduce){.pp-coin-fly{animation-duration:4s}}
-   `}</style>
+
   </div>
   <div className="grid grid-cols-3 border-t border-white/10 px-3 py-3 text-center text-[10px]">
    <div><span className="block text-slate-400">Rate</span><b className="text-white">+{p.speed.toFixed(5)} PP/s</b></div>
