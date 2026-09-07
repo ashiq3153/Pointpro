@@ -9,14 +9,31 @@ const APP_URL="https://pointpro-one.vercel.app";
 const REFERRAL="PPUSER";
 
 export default function PointProApp(){
- const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(true),[boost,setBoost]=useState(false),[toast,setToast]=useState("");
+ const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(true),[boost,setBoost]=useState(false),[toast,setToast]=useState(""),[showIntro,setShowIntro]=useState(true);
  const speed=boost?SPEED*1.2:SPEED;
  useEffect(()=>{if(!mining)return;const id=window.setInterval(()=>{setBalance(v=>v+speed);setToday(v=>v+speed)},1000);return()=>clearInterval(id)},[mining,speed]);
- useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(id)},[toast]);
+ useEffect(()=>{const id=window.setTimeout(()=>setShowIntro(false),2400);return()=>clearTimeout(id)},[]);\n useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(id)},[toast]);
  const notify=(s:string)=>setToast(s), progress=Math.min(100,Math.round(today/(SPEED*86400)*100));
  const copy=async()=>{try{await navigator.clipboard.writeText(`${APP_URL}/?ref=${REFERRAL}`);notify("Referral link copied")}catch{notify("Copy failed")}};
  const share=async()=>{const url=`${APP_URL}/?ref=${REFERRAL}`;if(navigator.share)await navigator.share({title:"PointPro",text:"Join PointPro",url});else await copy()};
  return <div className="min-h-screen bg-[#f5f7fb] text-[#18243b]">
+  {showIntro&&<div className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-[#071426]">
+   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(47,112,244,.32),transparent_38%),radial-gradient(circle_at_50%_75%,rgba(37,214,124,.14),transparent_34%)]"/>
+   <div className="relative flex flex-col items-center text-center">
+    <div className="intro-logo relative grid h-28 w-28 place-items-center rounded-[32px] bg-white shadow-[0_0_55px_rgba(47,112,244,.45)]">
+     <img src="/pointpro-mark.svg" alt="PointPro" className="h-20 w-20"/>
+     <span className="intro-ring absolute inset-[-10px] rounded-[38px] border border-white/15"/>
+    </div>
+    <div className="intro-title mt-7 text-[34px] font-black tracking-[-1.8px] text-white">Point<span className="text-[#25d67c]">Pro</span></div>
+    <p className="intro-sub mt-2 text-sm font-medium tracking-[.22em] text-slate-400">PP COIN MINING</p>
+    <div className="mt-7 h-1 w-28 overflow-hidden rounded-full bg-white/10"><div className="intro-bar h-full w-1/2 rounded-full bg-[#25d67c]"/></div>
+   </div>
+   <style jsx>{\`
+    .intro-logo{animation:introLogo .85s cubic-bezier(.2,.8,.2,1) both}.intro-ring{animation:introRing 1.5s ease-out infinite}.intro-title{animation:introText .7s .25s ease-out both}.intro-sub{animation:introText .7s .4s ease-out both}.intro-bar{animation:introBar 2s .2s ease-in-out both}
+    @keyframes introLogo{0%{opacity:0;transform:scale(.55) rotate(-12deg)}70%{opacity:1;transform:scale(1.06) rotate(2deg)}100%{transform:scale(1) rotate(0)}} @keyframes introRing{0%{opacity:.8;transform:scale(.88)}100%{opacity:0;transform:scale(1.25)}} @keyframes introText{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}} @keyframes introBar{0%{transform:translateX(-120%)}100%{transform:translateX(230%)}}
+   \`}</style>
+  </div>}
+
   <header className="sticky top-0 z-40 border-b border-[#e5e9f2] bg-white/95 backdrop-blur"><div className="mx-auto flex h-[70px] max-w-[680px] items-center justify-between px-5">
    <div className="flex items-center gap-2"><img src="/pointpro-mark.svg" className="h-9 w-9"/><div className="text-[25px] font-black tracking-[-1.5px]">Point<span className="text-[#25d67c]">Pro</span></div></div>
    <button onClick={()=>notify("Telegram will be connected from your bot settings")} className="flex items-center gap-2 rounded-2xl bg-[#159fe9] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(21,159,233,.2)]">✈ Telegram</button>
