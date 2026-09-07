@@ -12,7 +12,8 @@ export default function PointProApp(){
  const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(true),[boost,setBoost]=useState(false),[toast,setToast]=useState(""),[showIntro,setShowIntro]=useState(true);
  const speed=boost?SPEED*1.2:SPEED;
  useEffect(()=>{if(!mining)return;const id=window.setInterval(()=>{setBalance(v=>v+speed);setToday(v=>v+speed)},1000);return()=>clearInterval(id)},[mining,speed]);
- useEffect(()=>{const id=window.setTimeout(()=>setShowIntro(false),2400);return()=>clearTimeout(id)},[]);\n useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(id)},[toast]);
+ useEffect(()=>{const id=window.setTimeout(()=>setShowIntro(false),2400);return()=>clearTimeout(id)},[]);
+ useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(id)},[toast]);
  const notify=(s:string)=>setToast(s), progress=Math.min(100,Math.round(today/(SPEED*86400)*100));
  const copy=async()=>{try{await navigator.clipboard.writeText(`${APP_URL}/?ref=${REFERRAL}`);notify("Referral link copied")}catch{notify("Copy failed")}};
  const share=async()=>{const url=`${APP_URL}/?ref=${REFERRAL}`;if(navigator.share)await navigator.share({title:"PointPro",text:"Join PointPro",url});else await copy()};
@@ -28,10 +29,10 @@ export default function PointProApp(){
     <p className="intro-sub mt-2 text-sm font-medium tracking-[.22em] text-slate-400">PP COIN MINING</p>
     <div className="mt-7 h-1 w-28 overflow-hidden rounded-full bg-white/10"><div className="intro-bar h-full w-1/2 rounded-full bg-[#25d67c]"/></div>
    </div>
-   <style jsx>{\`
+   <style jsx>{`
     .intro-logo{animation:introLogo .85s cubic-bezier(.2,.8,.2,1) both}.intro-ring{animation:introRing 1.5s ease-out infinite}.intro-title{animation:introText .7s .25s ease-out both}.intro-sub{animation:introText .7s .4s ease-out both}.intro-bar{animation:introBar 2s .2s ease-in-out both}
     @keyframes introLogo{0%{opacity:0;transform:scale(.55) rotate(-12deg)}70%{opacity:1;transform:scale(1.06) rotate(2deg)}100%{transform:scale(1) rotate(0)}} @keyframes introRing{0%{opacity:.8;transform:scale(.88)}100%{opacity:0;transform:scale(1.25)}} @keyframes introText{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}} @keyframes introBar{0%{transform:translateX(-120%)}100%{transform:translateX(230%)}}
-   \`}</style>
+   `}</style>
   </div>}
 
   <header className="sticky top-0 z-40 border-b border-[#e5e9f2] bg-white/95 backdrop-blur"><div className="mx-auto flex h-[70px] max-w-[680px] items-center justify-between px-5">
