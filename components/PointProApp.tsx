@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home as HomeIcon, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu } from "lucide-react";
 
 type Tab = "home" | "mine" | "tasks" | "wallet" | "profile";
@@ -9,9 +10,11 @@ const APP_URL="https://pointpro-one.vercel.app";
 const REFERRAL="PPUSER";
 
 export default function PointProApp(){
- const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(true),[boost,setBoost]=useState(false),[toast,setToast]=useState(""),[showIntro,setShowIntro]=useState(true);
+ const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(false),[boost,setBoost]=useState(false),[toast,setToast]=useState(""),[showIntro,setShowIntro]=useState(true),[userId,setUserId]=useState<string|null>(null),[loadingData,setLoadingData]=useState(true);
  const speed=boost?SPEED*1.2:SPEED;
+ useEffect(()=>{let mounted=true;(async()=>{if(!supabase){setLoadingData(false);return}const {data:{user}}=await supabase.auth.getUser();if(!mounted)return;setUserId(user?.id??null);if(user){const {data}=await supabase.from("balances").select("available").eq("user_id",user.id).maybeSingle();if(mounted&&data)setBalance(Number(data.available)||0);const {data:s}=await supabase.from("mining_sessions").select("status").eq("user_id",user.id).eq("status","active").maybeSingle();if(mounted)setMining(!!s)}setLoadingData(false)})();return()=>{mounted=false}},[]);
  useEffect(()=>{if(!mining)return;const id=window.setInterval(()=>{setBalance(v=>v+speed);setToday(v=>v+speed)},1000);return()=>clearInterval(id)},[mining,speed]);
+ const toggleMining=async()=>{const next=!mining;setMining(next);if(!supabase||!userId){notify(next?"Mining started locally — connect Supabase to persist":"Mining paused");return}if(next){const {error}=await supabase.from("mining_sessions").insert({user_id:userId,rate:speed,status:"active"});if(error){setMining(false);notify("Could not start mining")}}else{const {data}=await supabase.from("mining_sessions").select("id").eq("user_id",userId).eq("status","active").order("started_at",{ascending:false}).limit(1).maybeSingle();if(data)await supabase.from("mining_sessions").update({status:"stopped",stopped_at:new Date().toISOString()}).eq("id",data.id)}};
  useEffect(()=>{const id=window.setTimeout(()=>setShowIntro(false),2400);return()=>clearTimeout(id)},[]);
  useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(id)},[toast]);
  const notify=(s:string)=>setToast(s), progress=Math.min(100,Math.round(today/(SPEED*86400)*100));
@@ -40,9 +43,9 @@ export default function PointProApp(){
    <button onClick={()=>notify("Telegram will be connected from your bot settings")} className="flex items-center gap-2 rounded-2xl bg-[#159fe9] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(21,159,233,.2)]">✈ Telegram</button>
   </div></header>
   <main className="mx-auto max-w-[680px] px-4 pb-28 pt-5">
-   {tab==="home"&&<HomePage p={{balance,today,mining,speed,progress,setMining,setTab,notify}}/>}
-   {tab==="mine"&&<Mine p={{balance,today,mining,speed,boost,setMining,setBoost,notify}}/>}
-   {tab==="tasks"&&<Tasks p={{mining,setMining,share,notify}}/>}
+   {tab==="home"&&<HomePage p={{balance,today,mining,speed,progress,setMining:toggleMining,setTab,notify}}/>}
+   {tab==="mine"&&<Mine p={{balance,today,mining,speed,boost,setMining:toggleMining,setBoost,notify}}/>}
+   {tab==="tasks"&&<Tasks p={{mining,setMining:toggleMining,share,notify}}/>}
    {tab==="wallet"&&<Wallet p={{balance,today,notify}}/>}
    {tab==="profile"&&<Profile p={{copy,share}}/>}
   </main>
