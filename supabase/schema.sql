@@ -85,3 +85,59 @@ create policy "transactions own read" on public.transactions for select using (a
 create policy "user tasks own read" on public.user_tasks for select using (auth.uid() = user_id);
 create policy "notifications own read" on public.notifications for select using (auth.uid() = user_id);
 create policy "tasks public read" on public.tasks for select using (active = true);
+
+
+-- Atomic mining settlement RPC.
+create or replace function public.settle_mining(p_session_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_session mining_sessions%rowtype;
+  v_balance balances%rowtype;
+  v_seconds numeric;
+  v_amount numeric;
+begin
+  select * into v_session
+  from mining_sessions
+  where id = p_session_id
+    and user_id = auth.uid()
+    and status = 'active'
+  for update;
+
+  if not found then
+    raise exception 'No active mining session';
+  end if;
+
+  v_seconds := greatest(0, least(extract(epoch from (now() - v_session.started_at)), 86400));
+  v_amount := v_seconds * coalesce(v_session.rate,0) * coalesce(v_session.boost_multiplier,1);
+
+  select * into v_balance from balances where user_id = auth.uid() for update;
+  if not found then
+    insert into balances(user_id,available,lifetime_earned)
+    values(auth.uid(),v_amount,v_amount)
+    returning * into v_balance;
+  else
+    update balances
+    set available = available + v_amount,
+        lifetime_earned = lifetime_earned + v_amount,
+        updated_at = now()
+    where user_id = auth.uid();
+  end if;
+
+  insert into transactions(user_id,type,amount,status,reference_id,metadata)
+  values(auth.uid(),'mining',v_amount,'completed',v_session.id,
+         jsonb_build_object('elapsed_seconds',v_seconds,'rate',v_session.rate,'multiplier',v_session.boost_multiplier));
+
+  update mining_sessions
+  set status='stopped', stopped_at=now()
+  where id=v_session.id;
+
+  return jsonb_build_object('settled',v_amount,'seconds',v_seconds);
+end;
+$$;
+
+revoke all on function public.settle_mining(uuid) from public;
+grant execute on function public.settle_mining(uuid) to authenticated;
