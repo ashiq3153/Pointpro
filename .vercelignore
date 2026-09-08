@@ -1,0 +1,3 @@
+# Supabase Edge Functions are deployed by Supabase, not Vercel.
+supabase/functions/
+supabase/config.toml
