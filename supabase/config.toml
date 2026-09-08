@@ -1,0 +1,4 @@
+project_id = "pointpro"
+
+[functions.settle-mining]
+verify_jwt = true
