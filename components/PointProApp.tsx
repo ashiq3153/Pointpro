@@ -11,7 +11,7 @@ const REFERRAL="PPUSER";
 
 export default function PointProApp(){
  const [tab,setTab]=useState<Tab>("home"),[balance,setBalance]=useState(0),[today,setToday]=useState(0),[mining,setMining]=useState(false),[boost,setBoost]=useState(false),[toast,setToast]=useState(""),[showIntro,setShowIntro]=useState(true),[userId,setUserId]=useState<string|null>(null),[loadingData,setLoadingData]=useState(true);
- const speed=boost?SPEED*1.2:SPEED;
+ const speed=boost?SPEED*1.2:SPEED;\n const refreshBalance=async()=>{if(!userId)return;const {data}=await supabase.from("balances").select("available").eq("user_id",userId).maybeSingle();if(data)setBalance(Number(data.available)||0)};
  useEffect(()=>{let mounted=true;let unsubscribe=()=>{};(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!mounted)return;setUserId(user?.id??null);if(user){const {data}=await supabase.from("balances").select("available").eq("user_id",user.id).maybeSingle();if(mounted&&data)setBalance(Number(data.available)||0);const {data:s}=await supabase.from("mining_sessions").select("status").eq("user_id",user.id).eq("status","active").maybeSingle();if(mounted)setMining(!!s)}setLoadingData(false);const sub=supabase.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;setUserId(session?.user?.id??null);if(!session?.user){setBalance(0);setToday(0);setMining(false);setTab("home")}});unsubscribe=()=>sub.data.subscription.unsubscribe()})();return()=>{mounted=false;unsubscribe()}},[]);
  useEffect(()=>{if(!mining||!supabase||!userId)return;const id=window.setInterval(async()=>{const {data,error}=await supabase.functions.invoke("settle-mining");if(!error&&data?.settled){const earned=Number(data.settled)||0;if(earned>0){setBalance(v=>v+earned);setToday(v=>v+earned)}}},15000);return()=>clearInterval(id)},[mining,userId]);
  const toggleMining=async()=>{const next=!mining;if(!supabase||!userId){setMining(next);notify(next?"Mining started locally — connect Supabase to persist":"Mining paused");return}if(next){const {data, error}=await supabase.rpc("start_mining");if(error){notify(error.message?.includes("already active")?"Mining is already active":"Could not start mining");return}setMining(true);notify("Mining started")}else{const {data,error}=await supabase.rpc("stop_mining");if(error){notify("Could not save mining earnings");return}const earned=Number(data?.settled)||0;if(earned>0){setBalance(v=>v+earned);setToday(v=>v+earned)}setMining(false);notify("Mining stopped and earnings saved")}};
@@ -48,7 +48,7 @@ export default function PointProApp(){
    {tab==="home"&&<HomePage p={{balance,today,mining,speed,progress,setMining:toggleMining,setTab,notify}}/>}
    {tab==="mine"&&<Mine p={{balance,today,mining,speed,boost,setMining:toggleMining,setBoost,notify}}/>}
    {tab==="tasks"&&<Tasks p={{mining,setMining:toggleMining,share,notify,userId}}/>}
-   {tab==="wallet"&&<Wallet p={{balance,today,userId,notify}}/>}
+   {tab==="wallet"&&<Wallet p={{balance,today,userId,notify,refreshBalance}}/>}
    {tab==="profile"&&<Profile p={{copy,share,userId}}/>}
   </main>
   <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#e3e8f1] bg-white/98 backdrop-blur"><div className="mx-auto grid max-w-[680px] grid-cols-5">
@@ -168,7 +168,81 @@ function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP C
  <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#194fc9] p-6 text-white"><img src="/pp-coin-stack.svg" className="absolute -right-6 bottom-0 w-44 opacity-90"/><p className="text-sm text-blue-100">PP Coin Balance</p><b className="mt-1 block text-4xl">{p.balance.toFixed(6)} PP</b><p className="mt-6 text-sm text-blue-100">Mining power</p><b className="text-xl">+{p.speed.toFixed(5)} PP / sec</b></section><Card title="Mining Statistics"><Row a="Per minute" b={"+"+(p.speed*60).toFixed(4)+" PP"}/><Row a="Per hour" b={"+"+(p.speed*3600).toFixed(2)+" PP"}/><Row a="Per day" b={"+"+(p.speed*86400).toFixed(2)+" PP"}/><Row a="Mining status" b={p.mining?"Active":"Paused"}/></Card><Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card></div>}
 function Tasks({p}:any){const [tasks,setTasks]=useState<any[]>([]);const [claimed,setClaimed]=useState<Record<string,boolean>>({});const [loading,setLoading]=useState(true);useEffect(()=>{let on=true;(async()=>{if(!supabase||!p.userId){setLoading(false);return}const {data}=await supabase.from("tasks").select("id,title,description,reward,task_type").eq("active",true).order("created_at",{ascending:false});if(on)setTasks(data||[]);const {data:ut}=await supabase.from("user_tasks").select("task_id,status").eq("user_id",p.userId);if(on){const m:any={};(ut||[]).forEach((x:any)=>{m[x.task_id]=x.status==="claimed"});setClaimed(m)}setLoading(false)})();return()=>{on=false}},[p.userId]);const claim=async(t:any)=>{if(claimed[t.id])return;if(!supabase||!p.userId){p.notify("Connect your account to claim rewards");return}const {data,error}=await supabase.rpc("claim_task",{p_task_id:t.id});if(error){p.notify(error.message?.includes("already claimed")?"Task already claimed":"Reward claim failed");return}const reward=Number(data?.reward)||0;setClaimed(v=>({...v,[t.id]:true}));p.notify(reward>0?("+"+reward.toFixed(2)+" PP added to your wallet"):"Task claimed successfully")};return <div className="space-y-5"><Title title="Tasks" sub="Complete tasks and earn more PP Coin."/><div className="flex gap-2 overflow-x-auto pb-1">{["All","Daily","Mining","Social"].map((x,i)=><span key={x} className={`whitespace-nowrap rounded-full border px-5 py-2.5 text-sm font-bold ${i===0?"border-[#2f70f4] bg-[#2f70f4] text-white":"border-[#e4e8f0] bg-white text-[#8993a6]"}`}>{x}</span>)}</div><Card>{loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading tasks…</div>:tasks.length===0?<div className="p-6 text-center text-sm text-[#8993a6]">No active tasks yet</div>:tasks.map((t:any)=><Task key={t.id} icon={<Gift/>} title={t.title} text={t.description||t.task_type} button={claimed[t.id]?"Claimed":`+${Number(t.reward).toFixed(2)} PP`} onClick={()=>claim(t)}/>)}</Card></div>}
 
-function Wallet({p}:any){const [tx,setTx]=useState<any[]>([]);const [loading,setLoading]=useState(true);useEffect(()=>{let on=true;(async()=>{if(!supabase||!p.userId){setLoading(false);return}const {data}=await supabase.from("transactions").select("id,type,amount,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(20);if(on)setTx(data||[]);setLoading(false)})();return()=>{on=false}},[p.userId]);return <div className="space-y-5"><Title title="Wallet" sub="Manage your PP Coin securely."/><section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#174bc8] p-6 text-white shadow-[0_15px_35px_rgba(47,112,244,.2)]"><p className="text-sm font-bold text-blue-100">POINTPRO WALLET</p><b className="mt-2 block text-4xl">{p.balance.toFixed(6)} PP</b><p className="mt-1 text-sm text-blue-100">≈ $0.00 USD • Live Rate</p><div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs"><div><b className="block text-base">{p.balance.toFixed(3)}</b>Total</div><div><b className="block text-base">{p.today.toFixed(3)}</b>Today</div><div><b className="block text-base">{tx.length}</b>Transactions</div></div></section><div className="grid grid-cols-4 gap-2.5"><WalletAction icon={<ArrowDownToLine/>} label="Receive" onClick={()=>p.notify("Receive will be enabled after wallet setup")}/><WalletAction icon={<ArrowUpFromLine/>} label="Send" onClick={()=>p.notify("Send requires a verified recipient")}/><WalletAction icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>p.notify("Exchange is not enabled yet")}/><WalletAction icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>p.notify("Withdrawal is not enabled yet")}/></div><Card title="Recent Transactions">{loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading transactions…</div>:tx.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No transactions yet</div>:<div>{tx.map(t=><div key={t.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3 last:border-0"><div><b className="block text-sm capitalize">{t.type}</b><small className="text-xs text-[#8993a6]">{new Date(t.created_at).toLocaleString()}</small></div><div className="text-right"><b className="block text-sm">{Number(t.amount)>=0?"+":""}{Number(t.amount).toFixed(6)} PP</b><small className="text-xs text-[#8993a6] capitalize">{t.status}</small></div></div>)}</div>}</Card></div>}
+function Wallet({p}:any){
+ const [tx,setTx]=useState<any[]>([]);
+ const [requests,setRequests]=useState<any[]>([]);
+ const [loading,setLoading]=useState(true);
+ const [showWithdraw,setShowWithdraw]=useState(false);
+ const [amount,setAmount]=useState("");
+ const [method,setMethod]=useState<"bkash"|"nagad"|"usdt">("bkash");
+ const [destination,setDestination]=useState("");
+ const [busy,setBusy]=useState(false);
+
+ const load=async()=>{
+  if(!supabase||!p.userId){setLoading(false);return}
+  const [{data:t},{data:r}]=await Promise.all([
+   supabase.from("transactions").select("id,type,amount,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(20),
+   supabase.from("withdrawal_requests").select("id,amount,method,destination,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(10)
+  ]);
+  setTx(t||[]);setRequests(r||[]);setLoading(false);
+ };
+ useEffect(()=>{load()},[p.userId]);
+
+ const submitWithdrawal=async(e:React.FormEvent)=>{
+  e.preventDefault();
+  const value=Number(amount);
+  if(!Number.isFinite(value)||value<=0){p.notify("Enter a valid withdrawal amount");return}
+  if(value>Number(p.balance)){p.notify("Insufficient balance");return}
+  if(destination.trim().length<5){p.notify("Enter a valid destination");return}
+  setBusy(true);
+  const {data,error}=await supabase.rpc("request_withdrawal",{p_amount:value,p_method:method,p_destination:destination.trim()});
+  setBusy(false);
+  if(error){p.notify(error.message||"Withdrawal request failed");return}
+  setAmount("");setDestination("");setShowWithdraw(false);
+  await p.refreshBalance?.();await load();
+  p.notify("Withdrawal request submitted");
+ };
+
+ return <div className="space-y-5">
+  <Title title="Wallet" sub="Manage your PP Coin securely."/>
+  <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#174bc8] p-6 text-white shadow-[0_15px_35px_rgba(47,112,244,.2)]">
+   <p className="text-sm font-bold text-blue-100">POINTPRO WALLET</p>
+   <b className="mt-2 block text-4xl">{p.balance.toFixed(6)} PP</b>
+   <p className="mt-1 text-sm text-blue-100">Available balance for withdrawal</p>
+   <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs">
+    <div><b className="block text-base">{p.balance.toFixed(3)}</b>Available</div>
+    <div><b className="block text-base">{p.today.toFixed(3)}</b>Today</div>
+    <div><b className="block text-base">{requests.length}</b>Withdrawals</div>
+   </div>
+  </section>
+
+  <div className="grid grid-cols-4 gap-2.5">
+   <WalletAction icon={<ArrowDownToLine/>} label="Receive" onClick={()=>p.notify("Receive will be enabled after wallet setup")}/>
+   <WalletAction icon={<ArrowUpFromLine/>} label="Send" onClick={()=>p.notify("Send is disabled for security")}/>
+   <WalletAction icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>p.notify("Exchange is not enabled yet")}/>
+   <WalletAction icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>setShowWithdraw(true)}/>
+  </div>
+
+  {showWithdraw&&<section className="rounded-[28px] border border-[#dfe5ef] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]">
+   <div className="flex items-center justify-between"><div><h2 className="text-xl font-black">Withdraw PP Coin</h2><p className="mt-1 text-xs text-[#8993a6]">Available: {p.balance.toFixed(6)} PP</p></div><button type="button" onClick={()=>setShowWithdraw(false)} className="rounded-xl bg-[#f1f3f7] px-3 py-2 text-sm font-bold">Close</button></div>
+   <form onSubmit={submitWithdrawal} className="mt-4 space-y-3">
+    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Withdrawal method</span><select value={method} onChange={e=>setMethod(e.target.value as any)} className="w-full rounded-2xl border border-[#dfe5ef] bg-white px-4 py-3 text-sm font-semibold outline-none"><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="usdt">USDT</option></select></label>
+    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Amount (PP)</span><input value={amount} onChange={e=>setAmount(e.target.value)} type="number" min="0.000001" step="0.000001" placeholder="Enter amount" className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label>
+    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">{method==="usdt"?"USDT wallet address":"Account number"}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={method==="usdt"?"Enter wallet address":"01XXXXXXXXX"} className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label>
+    <div className="rounded-2xl bg-[#fff8e6] p-3 text-xs leading-5 text-[#856404]">Your PP Coin is deducted when the request is submitted and the request enters <b>Pending</b> status. Keep the destination details correct.</div>
+    <button disabled={busy} className="w-full rounded-2xl bg-[#2f70f4] py-3.5 font-black text-white disabled:opacity-60">{busy?"Submitting…":"Submit Withdrawal Request"}</button>
+   </form>
+  </section>}
+
+  <Card title="Withdrawal History">
+   {loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading withdrawals…</div>:requests.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No withdrawal requests yet</div>:<div>{requests.map(r=><div key={r.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3.5 last:border-0"><div><b className="block text-sm uppercase">{r.method}</b><small className="text-xs text-[#8993a6]">{r.destination} • {new Date(r.created_at).toLocaleString()}</small></div><div className="text-right"><b className="block text-sm">-{Number(r.amount).toFixed(6)} PP</b><small className="text-xs font-bold capitalize text-[#8993a6]">{r.status}</small></div></div>)}</div>}
+  </Card>
+
+  <Card title="Recent Transactions">
+   {loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading transactions…</div>:tx.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No transactions yet</div>:<div>{tx.map(t=><div key={t.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3 last:border-0"><div><b className="block text-sm capitalize">{t.type}</b><small className="text-xs text-[#8993a6]">{new Date(t.created_at).toLocaleString()}</small></div><div className="text-right"><b className="block text-sm">{Number(t.amount)>=0?"+":""}{Number(t.amount).toFixed(6)} PP</b><small className="text-xs text-[#8993a6] capitalize">{t.status}</small></div></div>)}</div>}
+  </Card>
+ </div>
+}
 function Profile({p}:any){const [profile,setProfile]=useState<any>(null);const [refCount,setRefCount]=useState(0);useEffect(()=>{let on=true;(async()=>{if(!supabase||!p.userId)return;const {data}=await supabase.from("profiles").select("display_name,username,referral_code").eq("id",p.userId).maybeSingle();if(on)setProfile(data);const {count}=await supabase.from("profiles").select("id",{count:"exact",head:true}).eq("referred_by",p.userId);if(on)setRefCount(count||0)})();return()=>{on=false}},[p.userId]);const code=profile?.referral_code||REFERRAL;return <div className="space-y-5"><Title title="Profile" sub="Your PointPro account"/><section className="rounded-[28px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]"><div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[#eaf2ff]"><UserRound size={31} className="text-[#2f70f4]"/></div><div><h2 className="text-xl font-black">{profile?.display_name||"PointPro Miner"}</h2><p className="text-sm text-[#8993a6]">@{profile?.username||"ppuser"}</p></div><CheckCircle2 className="ml-auto text-[#25c879]"/></div><div className="mt-5 rounded-2xl bg-[#101a29] p-4 text-white"><p className="text-xs text-slate-400">Your Referral Code</p><b className="mt-1 block text-2xl text-[#ffd02f]">{code}</b><p className="mt-2 text-sm text-slate-400">Invite friends and earn referral rewards.</p></div></section><Card title="Referral"><Row a="Referral code" b={code}/><Row a="Total referrals" b={String(refCount)}/><Row a="Referral earnings" b="0.000000 PP"/><div className="mt-3 flex gap-2"><button onClick={p.copy} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f70f4] py-3 font-bold text-white"><Copy size={16}/> Copy</button><button onClick={p.share} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#e3e8f1] py-3 font-bold"><Share2 size={16}/> Share</button></div></Card><Card><MenuRow icon={<ShieldCheck/>} text="Security"/><MenuRow icon={<Bell/>} text="Notifications"/><MenuRow icon={<CircleHelp/>} text="Support"/><button onClick={async()=>{await supabase.auth.signOut()}} className="flex w-full items-center gap-3 py-4 text-left text-[#e5485d]"><LogOut size={19}/><b className="text-sm">Logout</b></button></Card></div>}
 
 function Title({title,sub}:{title:string;sub:string}){return <div><h1 className="text-[30px] font-black tracking-tight">{title}</h1><p className="mt-1 text-sm text-[#8993a6]">{sub}</p></div>}
