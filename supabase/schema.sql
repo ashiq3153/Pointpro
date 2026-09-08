@@ -193,3 +193,94 @@ $$;
 
 revoke all on function public.claim_task(uuid) from public;
 grant execute on function public.claim_task(uuid) to authenticated;
+
+-- Secure mining start. The earning rate is controlled by the server.
+create or replace function public.start_mining()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_session mining_sessions%rowtype;
+begin
+  if auth.uid() is null then raise exception 'Unauthorized'; end if;
+
+  if exists (
+    select 1 from mining_sessions
+    where user_id = auth.uid() and status = 'active'
+  ) then
+    raise exception 'Mining is already active';
+  end if;
+
+  insert into mining_sessions(user_id, rate, boost_multiplier, status)
+  values(auth.uid(), 0.00124, 1, 'active')
+  returning * into v_session;
+
+  return jsonb_build_object(
+    'session_id', v_session.id,
+    'rate', v_session.rate,
+    'started_at', v_session.started_at
+  );
+end;
+$$;
+
+revoke all on function public.start_mining() from public;
+grant execute on function public.start_mining() to authenticated;
+
+-- Secure mining stop. It settles the final interval and closes the session atomically.
+create or replace function public.stop_mining()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_session mining_sessions%rowtype;
+  v_seconds numeric;
+  v_amount numeric;
+begin
+  if auth.uid() is null then raise exception 'Unauthorized'; end if;
+
+  select * into v_session
+  from mining_sessions
+  where user_id = auth.uid() and status = 'active'
+  order by started_at desc
+  limit 1
+  for update;
+
+  if not found then
+    raise exception 'No active mining session';
+  end if;
+
+  v_seconds := greatest(0, least(extract(epoch from (now() - v_session.started_at)), 86400));
+  v_amount := v_seconds * coalesce(v_session.rate,0) * coalesce(v_session.boost_multiplier,1);
+
+  if v_amount > 0 then
+    insert into balances(user_id, available, lifetime_earned)
+    values(auth.uid(), v_amount, v_amount)
+    on conflict (user_id) do update set
+      available = balances.available + excluded.available,
+      lifetime_earned = balances.lifetime_earned + excluded.lifetime_earned,
+      updated_at = now();
+
+    insert into transactions(user_id,type,amount,status,reference_id,metadata)
+    values(auth.uid(),'mining',v_amount,'completed',v_session.id,
+           jsonb_build_object(
+             'elapsed_seconds',v_seconds,
+             'rate',v_session.rate,
+             'multiplier',v_session.boost_multiplier,
+             'final_settlement',true
+           ));
+  end if;
+
+  update mining_sessions
+  set status='stopped', stopped_at=now()
+  where id=v_session.id;
+
+  return jsonb_build_object('settled',v_amount,'seconds',v_seconds);
+end;
+$$;
+
+revoke all on function public.stop_mining() from public;
+grant execute on function public.stop_mining() to authenticated;
