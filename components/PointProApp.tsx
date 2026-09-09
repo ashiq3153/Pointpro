@@ -122,70 +122,7 @@ function Mine({p}:any){
  const mm=String(Math.floor((sessionSeconds%3600)/60)).padStart(2,"0");
  const ss=String(sessionSeconds%60).padStart(2,"0");
  return <div className="space-y-5"><Title title="Mine PP Coin" sub="Your mining control center"/>
-  <section className="overflow-hidden rounded-[30px] bg-[#050d18] shadow-[0_24px_70px_rgba(5,16,30,.32)]">
-   <div className="relative aspect-[16/12] w-full overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_54%_42%,rgba(44,130,255,.24),transparent_30%),radial-gradient(circle_at_68%_75%,rgba(255,166,45,.12),transparent_28%),linear-gradient(145deg,#06101d,#0a1d31_52%,#020711)]"/>
-    <div className="absolute inset-0 opacity-30" style={{backgroundImage:"linear-gradient(rgba(93,179,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(93,179,255,.08) 1px,transparent 1px)",backgroundSize:"32px 32px"}}/>
-    <div className="absolute inset-x-5 bottom-8 h-28 rounded-full bg-black/70 blur-2xl"/>
-    <div className="absolute left-[5%] top-[8%] z-10 h-[59%] w-[48%] rounded-[25px] border border-white/15 bg-gradient-to-br from-[#26394c] via-[#101c29] to-[#050b12] shadow-[inset_0_1px_0_rgba(255,255,255,.15),0_25px_45px_rgba(0,0,0,.55)]">
-      <div className="absolute inset-2 rounded-[21px] border border-white/5"/>
-      <div className="absolute left-4 right-4 top-3 flex items-center justify-between text-[7px] font-bold tracking-[.16em] text-slate-400"><span>POINTPRO MINING ENGINE</span><span className="flex items-center gap-1 text-[#38e58b]"><i className="h-1.5 w-1.5 rounded-full bg-[#38e58b] animate-pulse"/>ONLINE</span></div>
-      <div className="absolute left-[10%] right-[10%] top-[16%] h-[42%] overflow-hidden rounded-[18px] border border-[#526b83] bg-[#02070d] shadow-[inset_0_0_35px_rgba(32,113,255,.24)]">
-       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(55,157,255,.14),transparent_45%)]"/>
-       <div className="absolute left-[13%] top-[22%] h-16 w-16 rounded-full border-4 border-[#2f83ff] bg-[#0a2a4b] shadow-[0_0_24px_rgba(47,131,255,.5)]"><div className="absolute inset-3 rounded-full border border-[#7bc5ff]/60 bg-[#3c9eff] shadow-[0_0_15px_#3c9eff] animate-pulse"/></div>
-       <div className="absolute right-[13%] top-[22%] h-16 w-16 rounded-full border-4 border-[#2f83ff] bg-[#0a2a4b] shadow-[0_0_24px_rgba(47,131,255,.5)]"><div className="absolute inset-3 rounded-full border border-[#7bc5ff]/60 bg-[#3c9eff] shadow-[0_0_15px_#3c9eff] animate-pulse" style={{animationDelay:".35s"}}/></div>
-       <div className="absolute left-[42%] top-[30%] h-10 w-[16%] rounded-full bg-[#2f83ff]/20 blur-md"/>
-       <div className="absolute left-[38%] top-[42%] h-1.5 w-[24%] bg-[#64bdff] shadow-[0_0_14px_#64bdff] animate-pulse"/>
-       <div className="absolute inset-x-5 bottom-4 h-1 rounded-full bg-slate-700"/>
-      </div>
-      <div className="absolute bottom-[8%] left-[10%] right-[10%] h-[25%] rounded-[15px] border border-[#3b5269] bg-[#07111c] shadow-[inset_0_0_18px_rgba(0,0,0,.6)]">
-       <div className="px-3 pt-2 text-[7px] font-bold tracking-[.16em] text-slate-500">SYSTEM TELEMETRY</div>
-       <div className="mt-2 grid grid-cols-3 gap-1 px-3 text-center"><Mini title="RATE" value={"+0.00124"}/><Mini title="NODE" value="ONLINE"/><Mini title="TEMP" value="36°C"/></div>
-       <div className="absolute bottom-2 left-3 right-3 h-1 overflow-hidden rounded-full bg-slate-700"><div className="h-full w-2/3 rounded-full bg-gradient-to-r from-[#2f83ff] to-[#35df8a] animate-pulse"/></div>
-      </div>
-      <div className="absolute -left-1 top-[30%] flex flex-col gap-2">{[1,2,3,4,5].map(i=><span key={i} className="h-1 w-2 rounded-r bg-slate-400/40"/>)}</div>
-    </div>
-    <div className="absolute left-[44%] top-[48%] z-20 h-12 w-11 rounded-r-xl border-y border-r border-slate-500 bg-[#172534] shadow-lg"><div className="m-2 h-7 rounded bg-[#030914] shadow-[0_0_14px_rgba(47,131,255,.35)]"/></div>
-    <div className="absolute left-[37%] right-[4%] top-[59%] z-10 h-[17%] rounded-[25px] border border-[#62778b] bg-gradient-to-b from-[#35495b] to-[#090f17] shadow-[0_18px_35px_rgba(0,0,0,.55)]">
-      <div className="absolute inset-x-3 top-3 h-9 overflow-hidden rounded-xl border border-[#52677a] bg-[#03070c] shadow-[inset_0_0_12px_rgba(0,0,0,.8)]">
-       <div className="belt absolute inset-y-0 -left-16 w-[180%]" style={{backgroundImage:"repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.18) 22px 24px,transparent 24px 48px)",animation:"belt 0.72s linear infinite"}}/>
-       <div className="absolute inset-0 bg-gradient-to-b from-white/8 via-transparent to-black/45"/>
-      </div>
-      {[0,1,2,3].map(i=><span key={i} className="belt-light absolute bottom-1 h-2 w-2 rounded-full bg-[#f5b83d]" style={{left:(8+i*29)+"%",animationDelay:(i*.16)+"s"}}/>)}
-      <div className="absolute -bottom-2 left-3 h-8 w-8 rounded-full border-2 border-slate-500 bg-[#101a25] shadow-lg"/><div className="absolute -bottom-2 right-3 h-8 w-8 rounded-full border-2 border-slate-500 bg-[#101a25] shadow-lg"/>
-    </div>
-    <div className="pointer-events-none absolute left-[39%] right-[4%] top-[53%] z-30 h-28 overflow-visible">
-      <div className="absolute left-0 top-1 h-12 w-9 rounded-b-2xl border-x border-b border-[#8aa0b4] bg-gradient-to-b from-[#394e60] to-[#111b26] shadow-lg"><div className="mx-auto mt-3 h-4 w-3 rounded-full bg-[#ffd447] shadow-[0_0_16px_#ffd447] animate-pulse"/></div>
-      {[0,1,2,3,4,5,6].map(i=><div key={i} className={"live-coin absolute grid h-10 w-10 place-items-center rounded-full border-2 border-[#fff3a6] bg-[radial-gradient(circle_at_32%_25%,#fff9c8,#ffd33d_52%,#b66a00)] text-[9px] font-black text-[#6b3d00] shadow-[0_3px_0_#8d5200,0_0_20px_rgba(255,211,61,.5),inset_0_1px_3px_rgba(255,255,255,.8)] "+(p.mining?"":"paused")} style={{animationDelay:(i*.72)+"s"}}><span className="grid h-6 w-6 place-items-center rounded-full border border-[#8d5700]/50 bg-[#ffda52]/75 shadow-inner">PP</span></div>)}
-      <div className="absolute right-0 top-4 h-20 w-16 rounded-2xl border border-[#5d7185] bg-gradient-to-br from-[#263847] to-[#080e16] shadow-[0_12px_25px_rgba(0,0,0,.55)]"><div className="absolute left-2 right-2 top-2 h-2 rounded-full bg-[#ffd447]/20"/><div className="absolute bottom-2 left-2 right-2 h-12 overflow-hidden rounded-lg bg-[#050a10]"><div className="absolute bottom-0 left-1 right-1 h-5 rounded-t-xl bg-gradient-to-t from-[#c07a12] to-[#ffd95b] shadow-[0_0_15px_rgba(255,211,61,.35)]"/></div></div>
-    </div>
-    <div className="absolute right-[5%] top-[8%] z-20 h-[39%] w-[39%] rounded-[20px] border border-[#52677a] bg-[#07111d]/95 p-3 shadow-[0_18px_35px_rgba(0,0,0,.48)]">
-      <div className="flex items-center justify-between text-[9px] font-black text-white"><span>LIVE ENGINE</span><span className="flex items-center gap-1 text-[7px] text-[#39e58b]"><i className="h-1.5 w-1.5 rounded-full bg-[#39e58b] animate-pulse"/>STABLE</span></div>
-      <div className="mt-2 rounded-xl border border-slate-700 bg-[#030811] p-2"><svg viewBox="0 0 240 80" className="h-20 w-full"><path d="M4 64L28 48L48 55L70 30L91 43L113 21L136 35L158 17L182 30L205 11L236 22" fill="none" stroke="#55b6ff" strokeWidth="3" strokeDasharray="7 6"><animate attributeName="stroke-dashoffset" from="0" to="-52" dur="1.4s" repeatCount="indefinite"/></path><path d="M4 64L28 48L48 55L70 30L91 43L113 21L136 35L158 17L182 30L205 11L236 22V75H4Z" fill="#2f70f4" opacity=".08"/></svg></div>
-      <div className="mt-2 grid grid-cols-2 gap-2 text-[7px]"><Mini title="SESSION" value={hh+":"+mm+":"+ss}/><Mini title="RATE" value={p.speed.toFixed(5)+" PP/s"}/></div>
-    </div>
-    <div className="absolute left-4 top-4 z-40 rounded-2xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-white shadow-xl backdrop-blur"><div className="flex items-center gap-2 text-[10px] font-black"><span className={"h-2.5 w-2.5 rounded-full "+(p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500")}/>{p.mining?"MINING ACTIVE":"MINING PAUSED"}</div><div className="mt-1 text-sm font-black tabular-nums">+{p.speed.toFixed(5)} PP/s</div></div>
-    <div className="absolute bottom-3 left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/10 bg-[#071426]/95 px-4 py-1.5 text-[10px] font-bold text-white shadow-lg"><span className={"mr-1 "+(p.mining?"text-[#39e58b]":"text-slate-500")}>●</span>{p.mining?"Coins are being collected":"Collection paused"}<span className="ml-2 text-slate-500">• Session verified</span></div>
-   </div>
-   <div className="grid grid-cols-3 border-t border-white/10 bg-[#07111d] px-3 py-3 text-center text-[10px]"><div><span className="block text-slate-400">Mining Rate</span><b className="text-white">+{p.speed.toFixed(5)} PP/s</b></div><div className="border-x border-white/10"><span className="block text-slate-400">Session</span><b className="text-white tabular-nums">{hh}:{mm}:{ss}</b></div><div><span className="block text-slate-400">Today</span><b className="text-[#39e58b]">+{p.today.toFixed(4)} PP</b></div></div>
-  </section>
-  <section className="relative overflow-hidden rounded-[28px] bg-[#071426] text-white shadow-[0_20px_55px_rgba(5,16,30,.25)]">
-   <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(47,131,255,.26),transparent_34%),radial-gradient(circle_at_78%_72%,rgba(255,190,60,.13),transparent_30%),linear-gradient(145deg,#071426,#0b2138_55%,#030914)]"/>
-   <div className="relative min-h-[255px] overflow-hidden p-5">
-    <div className="absolute -right-10 -top-8 h-44 w-44 rounded-full border-[18px] border-[#2f70f4]/25 bg-[#0b2a4d] shadow-[0_0_55px_rgba(47,131,255,.25)]"><div className="grid h-full place-items-center text-6xl font-black text-[#54a9ff]/60">P</div></div>
-    <div className="relative z-10 max-w-[58%]"><p className="text-[26px] font-black tracking-tight">Mine PP Coin</p><p className="mt-1 text-sm text-slate-300">Turn your time into value</p></div>
-    <div className="absolute right-4 top-4 z-20 rounded-2xl border border-white/15 bg-[#071426]/90 px-4 py-3 shadow-xl backdrop-blur">
-      <div className="flex items-center gap-2 text-xs font-black"><span className={`h-2.5 w-2.5 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"Mining Active":"Mining Paused"}</div>
-      <b className="mt-1 block text-lg tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
-    </div>
-    <div className="absolute bottom-5 left-4 right-4 z-20 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-[#071426]/90 backdrop-blur">
-      <div className="p-3"><span className="block text-[10px] text-slate-400">Mining Power</span><b className="mt-1 block text-sm tabular-nums">+{p.speed.toFixed(5)} PP/s</b></div>
-      <div className="border-x border-white/10 p-3"><span className="block text-[10px] text-slate-400">Session Time</span><b className="mt-1 block text-sm tabular-nums">{hh}:{mm}:{ss}</b></div>
-      <div className="p-3"><span className="block text-[10px] text-slate-400">Live Collection</span><b className="mt-1 block text-sm tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b></div>
-    </div>
-   </div>
-  </section>
-  <Card title="Production Details">
+  <Card title="Live Mining">
    <div className="mb-4 overflow-hidden rounded-2xl bg-[#071426]">
     <div className="relative overflow-hidden">
      <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline />
