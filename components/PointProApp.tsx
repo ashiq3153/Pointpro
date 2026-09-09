@@ -212,78 +212,20 @@ function Tasks({p}:any){
  </div>
 }
 function Wallet({p}:any){
- const [tx,setTx]=useState<any[]>([]);
- const [requests,setRequests]=useState<any[]>([]);
- const [loading,setLoading]=useState(true);
- const [showWithdraw,setShowWithdraw]=useState(false);
- const [amount,setAmount]=useState("");
- const [method,setMethod]=useState<"bkash"|"nagad"|"usdt">("bkash");
- const [destination,setDestination]=useState("");
- const [busy,setBusy]=useState(false);
-
- const load=async()=>{
-  if(!supabase||!p.userId){setLoading(false);return}
-  const [{data:t},{data:r}]=await Promise.all([
-   supabase.from("transactions").select("id,type,amount,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(20),
-   supabase.from("withdrawal_requests").select("id,amount,method,destination,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(10)
-  ]);
-  setTx(t||[]);setRequests(r||[]);setLoading(false);
- };
+ const [tx,setTx]=useState<any[]>([]),[requests,setRequests]=useState<any[]>([]),[loading,setLoading]=useState(true),[showWithdraw,setShowWithdraw]=useState(false),[amount,setAmount]=useState(""),[method,setMethod]=useState<"bkash"|"nagad"|"usdt">("bkash"),[destination,setDestination]=useState(""),[busy,setBusy]=useState(false);
+ const load=async()=>{if(!supabase||!p.userId){setLoading(false);return}const [{data:t},{data:r}]=await Promise.all([supabase.from("transactions").select("id,type,amount,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(20),supabase.from("withdrawal_requests").select("id,amount,method,destination,status,created_at").eq("user_id",p.userId).order("created_at",{ascending:false}).limit(10)]);setTx(t||[]);setRequests(r||[]);setLoading(false)};
  useEffect(()=>{load()},[p.userId]);
-
- const submitWithdrawal=async(e:React.FormEvent)=>{
-  e.preventDefault();
-  const value=Number(amount);
-  if(!Number.isFinite(value)||value<=0){p.notify("Enter a valid withdrawal amount");return}
-  if(value>Number(p.balance)){p.notify("Insufficient balance");return}
-  if(destination.trim().length<5){p.notify("Enter a valid destination");return}
-  setBusy(true);
-  const {data,error}=await supabase.rpc("request_withdrawal",{p_amount:value,p_method:method,p_destination:destination.trim()});
-  setBusy(false);
-  if(error){p.notify(error.message||"Withdrawal request failed");return}
-  setAmount("");setDestination("");setShowWithdraw(false);
-  await p.refreshBalance?.();await load();
-  p.notify("Withdrawal request submitted");
- };
-
- return <div className="space-y-5">
-  <Title title="Wallet" sub="Manage your PP Coin securely."/>
-  <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#174bc8] p-6 text-white shadow-[0_15px_35px_rgba(47,112,244,.2)]">
-   <p className="text-sm font-bold text-blue-100">POINTPRO WALLET</p>
-   <b className="mt-2 block text-4xl">{p.balance.toFixed(6)} PP</b>
-   <p className="mt-1 text-sm text-blue-100">Available balance for withdrawal</p>
-   <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs">
-    <div><b className="block text-base">{p.balance.toFixed(3)}</b>Available</div>
-    <div><b className="block text-base">{p.today.toFixed(3)}</b>Today</div>
-    <div><b className="block text-base">{requests.length}</b>Withdrawals</div>
-   </div>
+ const submitWithdrawal=async(e:React.FormEvent)=>{e.preventDefault();const value=Number(amount);if(!Number.isFinite(value)||value<=0){p.notify("Enter a valid withdrawal amount");return}if(value>Number(p.balance)){p.notify("Insufficient balance");return}if(destination.trim().length<5){p.notify("Enter a valid destination");return}setBusy(true);const {error}=await supabase.rpc("request_withdrawal",{p_amount:value,p_method:method,p_destination:destination.trim()});setBusy(false);if(error){p.notify(error.message||"Withdrawal request failed");return}setAmount("");setDestination("");setShowWithdraw(false);await p.refreshBalance?.();await load();p.notify("Withdrawal request submitted")};
+ const pending=requests.filter(x=>String(x.status).toLowerCase()==="pending").reduce((n,x)=>n+Number(x.amount),0);
+ return <div className="space-y-5 pb-3">
+  <section className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-[#081d36] via-[#13529b] to-[#2f70f4] p-5 text-white shadow-[0_18px_42px_rgba(30,91,180,.22)]">
+   <div className="absolute -right-14 -top-14 h-40 w-40 rounded-full border-[20px] border-white/10"/>
+   <div className="relative z-10"><div className="flex items-center justify-between"><p className="text-[10px] font-black tracking-[.18em] text-blue-100">POINTPRO WALLET</p><span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[9px] font-black">SECURE</span></div><b className="mt-2 block text-[32px] font-black tabular-nums">{p.balance.toFixed(6)} <span className="text-sm text-blue-100">PP</span></b><p className="mt-1 text-xs text-blue-100">Available balance</p><div className="mt-5 grid grid-cols-3 divide-x divide-white/15 rounded-2xl border border-white/10 bg-black/10 text-center backdrop-blur"><div className="p-3"><span className="block text-[8px] text-blue-100/70">TODAY</span><b className="mt-1 block text-sm tabular-nums">+{p.today.toFixed(3)}</b></div><div className="p-3"><span className="block text-[8px] text-blue-100/70">PENDING</span><b className="mt-1 block text-sm tabular-nums">{pending.toFixed(3)}</b></div><div className="p-3"><span className="block text-[8px] text-blue-100/70">REQUESTS</span><b className="mt-1 block text-sm">{requests.length}</b></div></div></div>
   </section>
-
-  <div className="grid grid-cols-4 gap-2.5">
-   <WalletAction icon={<ArrowDownToLine/>} label="Receive" onClick={()=>p.notify("Receive will be enabled after wallet setup")}/>
-   <WalletAction icon={<ArrowUpFromLine/>} label="Send" onClick={()=>p.notify("Send is disabled for security")}/>
-   <WalletAction icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>p.notify("Exchange is not enabled yet")}/>
-   <WalletAction icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>setShowWithdraw(true)}/>
-  </div>
-
-  {showWithdraw&&<section className="rounded-[28px] border border-[#dfe5ef] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]">
-   <div className="flex items-center justify-between"><div><h2 className="text-xl font-black">Withdraw PP Coin</h2><p className="mt-1 text-xs text-[#8993a6]">Available: {p.balance.toFixed(6)} PP</p></div><button type="button" onClick={()=>setShowWithdraw(false)} className="rounded-xl bg-[#f1f3f7] px-3 py-2 text-sm font-bold">Close</button></div>
-   <form onSubmit={submitWithdrawal} className="mt-4 space-y-3">
-    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Withdrawal method</span><select value={method} onChange={e=>setMethod(e.target.value as any)} className="w-full rounded-2xl border border-[#dfe5ef] bg-white px-4 py-3 text-sm font-semibold outline-none"><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="usdt">USDT</option></select></label>
-    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Amount (PP)</span><input value={amount} onChange={e=>setAmount(e.target.value)} type="number" min="0.000001" step="0.000001" placeholder="Enter amount" className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label>
-    <label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">{method==="usdt"?"USDT wallet address":"Account number"}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={method==="usdt"?"Enter wallet address":"01XXXXXXXXX"} className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label>
-    <div className="rounded-2xl bg-[#fff8e6] p-3 text-xs leading-5 text-[#856404]">Your PP Coin is deducted when the request is submitted and the request enters <b>Pending</b> status. Keep the destination details correct.</div>
-    <button disabled={busy} className="w-full rounded-2xl bg-[#2f70f4] py-3.5 font-black text-white disabled:opacity-60">{busy?"Submitting…":"Submit Withdrawal Request"}</button>
-   </form>
-  </section>}
-
-  <Card title="Withdrawal History">
-   {loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading withdrawals…</div>:requests.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No withdrawal requests yet</div>:<div>{requests.map(r=><div key={r.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3.5 last:border-0"><div><b className="block text-sm uppercase">{r.method}</b><small className="text-xs text-[#8993a6]">{r.destination} • {new Date(r.created_at).toLocaleString()}</small></div><div className="text-right"><b className="block text-sm">-{Number(r.amount).toFixed(6)} PP</b><small className="text-xs font-bold capitalize text-[#8993a6]">{r.status}</small></div></div>)}</div>}
-  </Card>
-
-  <Card title="Recent Transactions">
-   {loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading transactions…</div>:tx.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No transactions yet</div>:<div>{tx.map(t=><div key={t.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3 last:border-0"><div><b className="block text-sm capitalize">{t.type}</b><small className="text-xs text-[#8993a6]">{new Date(t.created_at).toLocaleString()}</small></div><div className="text-right"><b className="block text-sm">{Number(t.amount)>=0?"+":""}{Number(t.amount).toFixed(6)} PP</b><small className="text-xs text-[#8993a6] capitalize">{t.status}</small></div></div>)}</div>}
-  </Card>
+  <div className="grid grid-cols-4 gap-2.5"><WalletAction icon={<ArrowDownToLine/>} label="Receive" onClick={()=>p.notify("Receive will be enabled after wallet setup")}/><WalletAction icon={<ArrowUpFromLine/>} label="Send" onClick={()=>p.notify("Send is disabled for security")}/><WalletAction icon={<ArrowLeftRight/>} label="Exchange" onClick={()=>p.notify("Exchange is not enabled yet")}/><WalletAction icon={<ArrowUpFromLine/>} label="Withdraw" onClick={()=>setShowWithdraw(true)}/></div>
+  {showWithdraw&&<section className="rounded-[28px] border border-[#dfe5ef] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]"><div className="flex items-center justify-between"><div><h2 className="text-xl font-black">Withdraw PP Coin</h2><p className="mt-1 text-xs text-[#8993a6]">Available: {p.balance.toFixed(6)} PP</p></div><button type="button" onClick={()=>setShowWithdraw(false)} className="rounded-xl bg-[#f1f3f7] px-3 py-2 text-sm font-bold">Close</button></div><form onSubmit={submitWithdrawal} className="mt-4 space-y-3"><label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Withdrawal method</span><select value={method} onChange={e=>setMethod(e.target.value as any)} className="w-full rounded-2xl border border-[#dfe5ef] bg-white px-4 py-3 text-sm font-semibold"><option value="bkash">bKash</option><option value="nagad">Nagad</option><option value="usdt">USDT</option></select></label><label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">Amount (PP)</span><input value={amount} onChange={e=>setAmount(e.target.value)} type="number" min="0.000001" step="0.000001" placeholder="Enter amount" className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label><label className="block"><span className="mb-1.5 block text-xs font-bold text-[#66728a]">{method==="usdt"?"USDT wallet address":"Account number"}</span><input value={destination} onChange={e=>setDestination(e.target.value)} placeholder={method==="usdt"?"Enter wallet address":"01XXXXXXXXX"} className="w-full rounded-2xl border border-[#dfe5ef] px-4 py-3 text-sm outline-none"/></label><div className="rounded-2xl bg-[#fff8e6] p-3 text-xs leading-5 text-[#856404]">Withdrawal requests are processed according to your account and payment settings.</div><button disabled={busy} className="w-full rounded-2xl bg-[#2f70f4] py-3.5 font-black text-white disabled:opacity-60">{busy?"Submitting…":"Submit Withdrawal Request"}</button></form></section>}
+  <Card title="Withdrawal History">{loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading withdrawals…</div>:requests.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No withdrawal requests yet</div>:<div>{requests.map(r=><div key={r.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3.5 last:border-0"><div className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-xl bg-[#eef5ff] text-[#2f70f4]"><ArrowUpFromLine size={16}/></div><div><b className="block text-sm uppercase">{r.method}</b><small className="text-xs text-[#8993a6]">{r.destination} • {new Date(r.created_at).toLocaleDateString()}</small></div></div><div className="text-right"><b className="block text-sm tabular-nums">-{Number(r.amount).toFixed(6)} PP</b><small className={`text-xs font-bold capitalize ${String(r.status).toLowerCase()==="approved"?"text-[#20b96c]":String(r.status).toLowerCase()==="rejected"?"text-[#e05252]":"text-[#d39b00]"}`}>{r.status}</small></div></div>)}</div>}</Card>
+  <Card title="Recent Transactions">{loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading transactions…</div>:tx.length===0?<div className="rounded-2xl bg-[#f5f7fb] p-6 text-center text-sm text-[#8993a6]">No transactions yet</div>:<div>{tx.slice(0,8).map(t=><div key={t.id} className="flex items-center justify-between border-b border-[#edf0f5] py-3 last:border-0"><div><b className="block text-sm capitalize">{String(t.type).replace(/_/g," ")}</b><small className="text-xs text-[#8993a6]">{new Date(t.created_at).toLocaleDateString()}</small></div><b className={`text-sm tabular-nums ${Number(t.amount)>=0?"text-[#20b96c]":"text-[#e05252]"}`}>{Number(t.amount)>=0?"+":""}{Number(t.amount).toFixed(6)} PP</b></div>)}</div>}</Card>
  </div>
 }
 function Profile({p}:any){const [profile,setProfile]=useState<any>(null);const [refCount,setRefCount]=useState(0);useEffect(()=>{let on=true;(async()=>{if(!supabase||!p.userId)return;const {data}=await supabase.from("profiles").select("display_name,username,referral_code").eq("id",p.userId).maybeSingle();if(on)setProfile(data);const {count}=await supabase.from("profiles").select("id",{count:"exact",head:true}).eq("referred_by",p.userId);if(on)setRefCount(count||0)})();return()=>{on=false}},[p.userId]);const code=profile?.referral_code||REFERRAL;return <div className="space-y-5"><Title title="Profile" sub="Your PointPro account"/><section className="rounded-[28px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]"><div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-full bg-[#eaf2ff]"><UserRound size={31} className="text-[#2f70f4]"/></div><div><h2 className="text-xl font-black">{profile?.display_name||"PointPro Miner"}</h2><p className="text-sm text-[#8993a6]">@{profile?.username||"ppuser"}</p></div><CheckCircle2 className="ml-auto text-[#25c879]"/></div><div className="mt-5 rounded-2xl bg-[#101a29] p-4 text-white"><p className="text-xs text-slate-400">Your Referral Code</p><b className="mt-1 block text-2xl text-[#ffd02f]">{code}</b><p className="mt-2 text-sm text-slate-400">Invite friends and earn referral rewards.</p></div></section><Card title="Referral"><Row a="Referral code" b={code}/><Row a="Total referrals" b={String(refCount)}/><Row a="Referral earnings" b="0.000000 PP"/><div className="mt-3 flex gap-2"><button onClick={p.copy} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f70f4] py-3 font-bold text-white"><Copy size={16}/> Copy</button><button onClick={p.share} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#e3e8f1] py-3 font-bold"><Share2 size={16}/> Share</button></div></Card><Card><MenuRow icon={<ShieldCheck/>} text="Security"/><MenuRow icon={<Bell/>} text="Notifications"/><MenuRow icon={<CircleHelp/>} text="Support"/><button onClick={async()=>{await supabase.auth.signOut()}} className="flex w-full items-center gap-3 py-4 text-left text-[#e5485d]"><LogOut size={19}/><b className="text-sm">Logout</b></button></Card></div>}
