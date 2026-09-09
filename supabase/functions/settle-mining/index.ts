@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const {data:session}=await client.from("mining_sessions").select("id").eq("user_id",user.id).eq("status","active").order("started_at",{ascending:false}).limit(1).maybeSingle();
     if(!session) return new Response(JSON.stringify({error:"No active mining session"}),{status:409,headers:{...cors,"Content-Type":"application/json"}});
 
-    const {data,resultError}=await client.rpc("settle_mining",{p_session_id:session.id});
+    const {data,error:resultError}=await client.rpc("settle_mining",{p_session_id:session.id});
     if(resultError) throw resultError;
 
     return new Response(JSON.stringify(data),{headers:{...cors,"Content-Type":"application/json"}});
