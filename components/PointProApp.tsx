@@ -121,23 +121,33 @@ function Mine({p}:any){
  const hh=String(Math.floor(sessionSeconds/3600)).padStart(2,"0");
  const mm=String(Math.floor((sessionSeconds%3600)/60)).padStart(2,"0");
  const ss=String(sessionSeconds%60).padStart(2,"0");
- return <div className="space-y-5"><Title title="Mine PP Coin" sub="Your mining control center"/>
+ return <div className="space-y-5">
   <Card title="Live Mining">
-   <div className="mb-4 overflow-hidden rounded-2xl bg-[#071426]">
+   <div className="mb-4 overflow-hidden rounded-2xl bg-[#050d18] shadow-[0_18px_45px_rgba(5,16,30,.22)]">
     <div className="relative overflow-hidden">
      <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline />
-     <div className="pointer-events-none absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
-      <div className="rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-white shadow-lg backdrop-blur">
-       <div className="flex items-center gap-2 text-[10px] font-black"><span className={`h-2 w-2 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"MINING ACTIVE":"MINING PAUSED"}</div>
-       <b className="mt-0.5 block text-sm tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
+     <div className="pointer-events-none absolute left-0 right-0 top-0 bottom-0">
+      <div className="absolute left-[5%] top-[7%] rounded-2xl border border-[#4aa7ff]/35 bg-[#061426]/80 px-3 py-2 text-white shadow-[0_8px_24px_rgba(0,0,0,.35)] backdrop-blur-sm">
+       <div className="flex items-center gap-1.5 text-[9px] font-black tracking-wide"><span className={`h-2 w-2 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"MINING ACTIVE":"PAUSED"}</div>
+       <b className="mt-0.5 block text-[15px] font-black tabular-nums">+{p.speed.toFixed(5)} <span className="text-[11px] text-[#8fc9ff]">PP/s</span></b>
       </div>
-      <div className="rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-right text-white shadow-lg backdrop-blur">
-       <span className="block text-[9px] text-slate-400">LIVE COLLECTION</span>
-       <b className="block text-base tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b>
+      <div className="absolute left-[51%] top-[18%] w-[44%] overflow-hidden rounded-xl border border-[#36a9ff]/45 bg-[#020a16]/88 px-3 py-2 text-white shadow-[0_0_28px_rgba(20,135,255,.18)] backdrop-blur-[2px]">
+       <div className="flex items-center justify-between border-b border-[#4aa7ff]/20 pb-1.5"><span className="text-[10px] font-black tracking-widest text-[#43b9ff]">MINING ENGINE</span><span className="text-[8px] font-bold text-[#39e58b]">● ONLINE</span></div>
+       <div className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-[8px]">
+        <span className="text-slate-400">POWER</span><b className="text-right text-[10px] tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
+        <span className="text-slate-400">SESSION</span><b className="text-right text-[10px] tabular-nums">{hh}:{mm}:{ss}</b>
+        <span className="text-slate-400">EARNED</span><b className="text-right text-[10px] tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b>
+       </div>
+       <div className="mt-1.5 flex h-3 items-end gap-[2px] opacity-90">{Array.from({length:18},(_,i)=><i key={i} className="flex-1 rounded-t bg-[#35a9ff]" style={{height:`${28+((sessionSeconds+i*3)%70)}%`}}/>)}</div>
       </div>
-     </div>
-     <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-[10px] text-white shadow-lg backdrop-blur">
-      <span>Session {hh}:{mm}:{ss}</span><span className="text-[#39e58b]">● Live production</span>
+      <div className="absolute bottom-[5%] left-[5%] rounded-xl border border-white/10 bg-[#061426]/82 px-3 py-2 text-white shadow-lg backdrop-blur-sm">
+       <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Live Collection</span>
+       <b className="block text-[16px] font-black tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} <span className="text-[10px]">PP</span></b>
+      </div>
+      <div className="absolute bottom-[5%] right-[5%] rounded-xl border border-[#39e58b]/25 bg-[#061426]/82 px-3 py-2 text-white shadow-lg backdrop-blur-sm">
+       <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Session</span>
+       <b className="block text-[15px] font-black tabular-nums">{hh}:{mm}:{ss}</b>
+      </div>
      </div>
     </div>
    </div>
