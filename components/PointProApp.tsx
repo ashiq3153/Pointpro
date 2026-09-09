@@ -94,6 +94,10 @@ function AuthScreen(){
 function AuthInput({icon,value,onChange,placeholder,type="text",required=false}:any){return <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#06101d] px-4 py-3 text-slate-400 focus-within:border-[#2f70f4]"><span>{icon}</span><input className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-600" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} type={type} required={required}/></label>}
 
 function HomePage({p}:any){
+ const [daily,setDaily]=useState<any>(null),[dailyLoading,setDailyLoading]=useState(false);
+ useEffect(()=>{if(!supabase||!p.userId)return;(async()=>{const {data}=await supabase.from('daily_reward_claims').select('reward_day,claim_date,reward').eq('user_id',p.userId).order('claim_date',{ascending:false}).limit(1).maybeSingle();setDaily(data)})()},[p.userId]);
+ const claimDaily=async()=>{setDailyLoading(true);const {data,error}=await supabase.rpc('claim_daily_reward');setDailyLoading(false);if(error){p.notify(error.message?.includes('already claimed')?'Today\'s reward is already claimed':'Daily reward is unavailable');return}setDaily({reward_day:data.day,claim_date:new Date().toISOString().slice(0,10),reward:data.reward});await p.refreshBalance?.();p.notify('+'+Number(data.reward).toFixed(2)+' PP daily reward added')};
+ const todayClaimed=daily?.claim_date===new Date().toISOString().slice(0,10), rewardDay=todayClaimed?Number(daily?.reward_day||1):Math.min(Number(daily?.reward_day||0)+1,7), rewards=[1,2,3,5,7,10,15];
  const [seconds,setSeconds]=useState(0);
  useEffect(()=>{if(!p.mining)return;const id=window.setInterval(()=>setSeconds(v=>v+1),1000);return()=>clearInterval(id)},[p.mining]);
  const hh=String(Math.floor(seconds/3600)).padStart(2,"0");
@@ -122,6 +126,8 @@ function HomePage({p}:any){
    </div>
   </section>
 
+  <section className="rounded-[28px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]"><div className="flex items-center justify-between"><div><h2 className="text-[20px] font-black">Daily Reward</h2><p className="mt-1 text-xs text-[#8993a6]">{todayClaimed?"Come back tomorrow for the next reward":"Claim your reward once every day"}</p></div><Gift className="text-[#e0a900]" size={25}/></div><div className="mt-4 grid grid-cols-7 gap-1.5">{rewards.map((r,k)=><div key={k} className={`rounded-xl p-2 text-center ${k+1===rewardDay&&!todayClaimed?"bg-[#eef5ff] ring-2 ring-[#2f70f4]":"bg-[#f5f7fb]"}`}><span className="block text-[8px] font-bold text-[#8993a6]">DAY {k+1}</span><b className="mt-1 block text-[10px]">+{r}</b><small className="text-[7px] text-[#8993a6]">PP</small></div>)}</div><button disabled={todayClaimed||dailyLoading} onClick={claimDaily} className={`mt-4 w-full rounded-2xl py-3.5 text-sm font-black ${todayClaimed?"bg-[#eaf8f0] text-[#20b96c]":"bg-[#2f70f4] text-white"}`}>{dailyLoading?"Claiming…":todayClaimed?"✓ Claimed Today":"Claim Daily Reward · +"+rewards[rewardDay-1]+" PP"}</button></section>
+
   <section className="rounded-[28px] bg-white p-5 shadow-[0_12px_30px_rgba(31,51,86,.08)]">
    <div className="flex items-center justify-between"><div><h2 className="text-[20px] font-black text-[#17233a]">Mining Control</h2><p className="mt-1 text-xs text-[#8993a6]">{p.mining?"Your miner is producing PP Coin":"Start your miner to begin earning"}</p></div><Zap className={p.mining?"text-[#2f70f4]":"text-[#a0a8b7]"} size={25}/></div>
    <div className="mt-5 flex items-center gap-4">
@@ -134,7 +140,7 @@ function HomePage({p}:any){
   </section>
 
   <div><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-black text-[#17233a]">Quick Actions</h2><span className="text-[10px] font-bold uppercase tracking-wider text-[#a0a8b7]">Earn more</span></div><div className="grid grid-cols-4 gap-2.5">
-   <Quick icon={<Gift/>} label="Daily" onClick={()=>p.notify("Daily reward is ready")}/>
+   <Quick icon={<Gift/>} label="Daily" onClick={claimDaily}/>
    <Quick icon={<Zap/>} label="Boost" onClick={()=>p.setTab("mine")}/>
    <Quick icon={<ListChecks/>} label="Tasks" onClick={()=>p.setTab("tasks")}/>
    <Quick icon={<Users/>} label="Invite" onClick={()=>p.setTab("profile")}/>
