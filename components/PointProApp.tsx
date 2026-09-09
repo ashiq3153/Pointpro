@@ -149,75 +149,50 @@ function HomePage({p}:any){
 function Mine({p}:any){
  const [sessionSeconds,setSessionSeconds]=useState(0);
  useEffect(()=>{if(!p.mining)return;const id=window.setInterval(()=>setSessionSeconds(v=>v+1),1000);return()=>clearInterval(id)},[p.mining]);
- const hh=String(Math.floor(sessionSeconds/3600)).padStart(2,"0");
- const mm=String(Math.floor((sessionSeconds%3600)/60)).padStart(2,"0");
- const ss=String(sessionSeconds%60).padStart(2,"0");
+ const hh=String(Math.floor(sessionSeconds/3600)).padStart(2,"0"),mm=String(Math.floor((sessionSeconds%3600)/60)).padStart(2,"0"),ss=String(sessionSeconds%60).padStart(2,"0");
+ const liveEarned=p.today+sessionSeconds*p.speed;
  return <div className="space-y-5">
   <Card title="Live Mining">
-   <div className="mb-4 overflow-hidden rounded-2xl bg-[#050d18] shadow-[0_18px_45px_rgba(5,16,30,.22)]">
-    <div className="relative overflow-hidden">
+   <div className="overflow-hidden rounded-[26px] bg-[#030a13] shadow-[0_18px_50px_rgba(4,15,30,.3)]">
+    <div className="relative">
      <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline />
-     <div className="pointer-events-none absolute left-0 right-0 top-0 bottom-0">
-      <div className="absolute left-[5%] top-[7%] rounded-2xl border border-[#4aa7ff]/35 bg-[#061426]/80 px-3 py-2 text-white shadow-[0_8px_24px_rgba(0,0,0,.35)] backdrop-blur-sm">
-       <div className="flex items-center gap-1.5 text-[9px] font-black tracking-wide"><span className={`h-2 w-2 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"MINING ACTIVE":"PAUSED"}</div>
-       <b className="mt-0.5 block text-[15px] font-black tabular-nums">+{p.speed.toFixed(5)} <span className="text-[11px] text-[#8fc9ff]">PP/s</span></b>
+     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#020812]/80 via-transparent to-[#020812]/25"/>
+     <div className="pointer-events-none absolute left-[5%] top-[6%] rounded-full border border-[#39e58b]/30 bg-[#061426]/85 px-3 py-1.5 text-[9px] font-black text-white shadow-lg backdrop-blur">
+      <span className={`mr-1.5 inline-block h-2 w-2 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"MINING ACTIVE":"MINING PAUSED"}
+     </div>
+     <div className="pointer-events-none absolute left-[50%] top-[12%] w-[46%] rounded-2xl border border-[#3ba8ff]/45 bg-[#020914]/90 p-3 text-white shadow-[0_0_30px_rgba(28,135,255,.25)] backdrop-blur-[3px]">
+      <div className="flex items-center justify-between border-b border-white/10 pb-1.5"><b className="text-[10px] tracking-[.16em] text-[#5dbaff]">LIVE MINING</b><span className="text-[8px] font-black text-[#39e58b]">● ONLINE</span></div>
+      <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2">
+       <div><span className="block text-[8px] text-slate-500">RATE</span><b className="block text-[11px] tabular-nums">+{p.speed.toFixed(5)} <em className="text-[8px] not-italic text-[#75bfff]">PP/s</em></b></div>
+       <div><span className="block text-[8px] text-slate-500">SESSION</span><b className="block text-[11px] tabular-nums">{hh}:{mm}:{ss}</b></div>
+       <div className="col-span-2"><span className="block text-[8px] text-slate-500">LIVE EARNED</span><b className="block text-[15px] tabular-nums text-[#ffd447]">{liveEarned.toFixed(6)} PP</b></div>
       </div>
-      <div className="absolute left-[51%] top-[18%] w-[44%] overflow-hidden rounded-xl border border-[#36a9ff]/45 bg-[#020a16]/88 px-3 py-2 text-white shadow-[0_0_28px_rgba(20,135,255,.18)] backdrop-blur-[2px]">
-       <div className="flex items-center justify-between border-b border-[#4aa7ff]/20 pb-1.5"><span className="text-[10px] font-black tracking-widest text-[#43b9ff]">MINING ENGINE</span><span className="text-[8px] font-bold text-[#39e58b]">● ONLINE</span></div>
-       <div className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 text-[8px]">
-        <span className="text-slate-400">POWER</span><b className="text-right text-[10px] tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
-        <span className="text-slate-400">SESSION</span><b className="text-right text-[10px] tabular-nums">{hh}:{mm}:{ss}</b>
-        <span className="text-slate-400">EARNED</span><b className="text-right text-[10px] tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b>
-       </div>
-       <div className="mt-1.5 flex h-3 items-end gap-[2px] opacity-90">{Array.from({length:18},(_,i)=><i key={i} className="flex-1 rounded-t bg-[#35a9ff]" style={{height:`${28+((sessionSeconds+i*3)%70)}%`}}/>)}</div>
-      </div>
-      <div className="absolute bottom-[5%] left-[5%] rounded-xl border border-white/10 bg-[#061426]/82 px-3 py-2 text-white shadow-lg backdrop-blur-sm">
-       <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Live Collection</span>
-       <b className="block text-[16px] font-black tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} <span className="text-[10px]">PP</span></b>
-      </div>
-      <div className="absolute bottom-[5%] right-[5%] rounded-xl border border-[#39e58b]/25 bg-[#061426]/82 px-3 py-2 text-white shadow-lg backdrop-blur-sm">
-       <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Session</span>
-       <b className="block text-[15px] font-black tabular-nums">{hh}:{mm}:{ss}</b>
-      </div>
+      <div className="mt-2 flex h-3 items-end gap-[2px]">{Array.from({length:24},(_,k)=><i key={k} className="flex-1 rounded-t bg-[#2d9cff] transition-all" style={{height:`${20+((sessionSeconds*7+k*13)%75)}%`}}/>)}</div>
+     </div>
+     <div className="pointer-events-none absolute bottom-[5%] left-[5%] rounded-2xl border border-[#ffd447]/20 bg-[#061426]/88 px-3 py-2 shadow-xl backdrop-blur">
+      <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Live Collection</span><b className="block text-[17px] tabular-nums text-[#ffd447]">{liveEarned.toFixed(6)} <span className="text-[9px]">PP</span></b>
+     </div>
+     <div className="pointer-events-none absolute bottom-[5%] right-[5%] rounded-2xl border border-white/10 bg-[#061426]/88 px-3 py-2 text-right shadow-xl backdrop-blur">
+      <span className="block text-[8px] font-bold uppercase tracking-wider text-slate-400">Mining Time</span><b className="block text-[16px] tabular-nums text-white">{hh}:{mm}:{ss}</b>
      </div>
     </div>
    </div>
-   <div className="rounded-2xl bg-[#f5f7fb] p-4">
-    <div className="flex items-center justify-between"><div><b className="text-sm">Live production rate</b><p className="mt-0.5 text-xs text-[#8993a6]">Calculated from the current mining power</p></div><span className="rounded-full bg-[#e8fff3] px-3 py-1.5 text-[10px] font-black text-[#20b96c]">LIVE</span></div>
+   <div className="mt-4 rounded-2xl bg-[#f5f7fb] p-4">
+    <div className="flex items-center justify-between"><div><b className="text-sm">Production Overview</b><p className="mt-0.5 text-xs text-[#8993a6]">Live estimate from your current mining power</p></div><span className="rounded-full bg-[#e8fff3] px-3 py-1.5 text-[10px] font-black text-[#20b96c]">LIVE</span></div>
     <div className="mt-4 grid grid-cols-2 gap-2.5">
-     <Prod label="Per second" value={p.speed.toFixed(5)+" PP"}/>
-     <Prod label="Per minute" value={(p.speed*60).toFixed(4)+" PP"}/>
-     <Prod label="Per hour" value={(p.speed*3600).toFixed(3)+" PP"}/>
-     <Prod label="Per day" value={(p.speed*86400).toFixed(3)+" PP"}/>
-     <Prod label="7 days" value={(p.speed*86400*7).toFixed(3)+" PP"}/>
-     <Prod label="30 days" value={(p.speed*86400*30).toFixed(3)+" PP"}/>
+     <Prod label="Per second" value={p.speed.toFixed(5)+" PP"}/><Prod label="Per minute" value={(p.speed*60).toFixed(4)+" PP"}/><Prod label="Per hour" value={(p.speed*3600).toFixed(3)+" PP"}/><Prod label="Per day" value={(p.speed*86400).toFixed(3)+" PP"}/><Prod label="7 days" value={(p.speed*86400*7).toFixed(3)+" PP"}/><Prod label="30 days" value={(p.speed*86400*30).toFixed(3)+" PP"}/>
     </div>
    </div>
-   <div className="mt-3 rounded-2xl border border-[#e4e9f1] p-4">
-    <div className="flex items-center justify-between"><b className="text-sm">Production formula</b><span className="text-xs font-bold text-[#2f70f4]">{p.boost?"+20% boost":"Base rate"}</span></div>
-    <p className="mt-2 text-xs leading-5 text-[#66728a]">PP produced = mining rate × active time. The server remains the source of truth for credited earnings; the figures here are live production estimates for the mining UI.</p>
-    <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]"><MiniStat label="Base" value="+0.00124 PP/s"/><MiniStat label="Boosted" value="+0.001488 PP/s"/><MiniStat label="24H boosted" value="+128.563 PP"/></div>
-   </div>
-   <div className="mt-3"><Row a="Mining status" b={p.mining?"Active":"Paused"}/></div>
+   <div className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-[#e4e9f1] p-3 text-center"><MiniStat label="Base" value="+0.00124 PP/s"/><MiniStat label="Boosted" value="+0.001488 PP/s"/><MiniStat label="Status" value={p.mining?"ONLINE":"PAUSED"}/></div>
   </Card>
   <Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card>
   <section className="rounded-[28px] bg-white p-5 shadow-[0_10px_28px_rgba(31,51,86,.07)]">
-   <div className="flex items-start justify-between gap-3"><div><h2 className="text-[20px] font-black">Premium Mining Plans</h2><p className="mt-1 text-xs leading-5 text-[#8993a6]">Choose extra mining power for your account.</p></div><span className="rounded-full bg-[#eef5ff] px-3 py-1.5 text-[10px] font-black text-[#2f70f4]">30 DAYS</span></div>
-   <div className="mt-4 space-y-3">
-    <PaidPlan name="Starter" power="+20%" price="৳199" detail="Good for getting started" onClick={()=>p.notify("Secure checkout will open here")}/>
-    <PaidPlan name="Pro" power="+50%" price="৳399" detail="Most popular mining plan" popular onClick={()=>p.notify("Secure checkout will open here")}/>
-    <PaidPlan name="Max" power="+100%" price="৳699" detail="Maximum available boost" onClick={()=>p.notify("Secure checkout will open here")}/>
-   </div>
+   <div className="flex items-start justify-between gap-3"><div><h2 className="text-[20px] font-black">Premium Mining Plans</h2><p className="mt-1 text-xs text-[#8993a6]">Choose extra mining power for your account.</p></div><span className="rounded-full bg-[#eef5ff] px-3 py-1.5 text-[10px] font-black text-[#2f70f4]">30 DAYS</span></div>
+   <div className="mt-4 space-y-3"><PaidPlan name="Starter" power="+20%" price="৳199" detail="Good for getting started" onClick={()=>p.notify("Secure checkout will open here")}/><PaidPlan name="Pro" power="+50%" price="৳399" detail="Most popular mining plan" popular onClick={()=>p.notify("Secure checkout will open here")}/><PaidPlan name="Max" power="+100%" price="৳699" detail="Maximum available boost" onClick={()=>p.notify("Secure checkout will open here")}/></div>
    <div className="mt-4 flex items-start gap-2 rounded-2xl bg-[#f5f8fc] p-3 text-[11px] leading-5 text-[#66728a]"><ShieldCheck size={16} className="mt-0.5 shrink-0 text-[#25c879]"/><span>Plan selection is separate from your wallet balance. Payment checkout can be connected to your preferred payment gateway.</span></div>
   </section>
-  <style jsx>{`
-   @keyframes belt{to{transform:translateX(48px)}} 
-   @keyframes coinMove{0%{left:-2%;top:12px;transform:translateY(-18px) scale(.25) rotate(-35deg);opacity:0}8%{opacity:1}24%{transform:translateY(0) scale(1) rotate(8deg)}55%{transform:translateY(3px) scale(1) rotate(180deg)}78%{transform:translateY(0) scale(.92) rotate(330deg)}100%{left:91%;top:24px;transform:translateY(8px) scale(.42) rotate(420deg);opacity:0}}
-   .live-coin{animation:coinMove 4.6s cubic-bezier(.18,.62,.25,1) infinite}.live-coin.paused{animation-play-state:paused;opacity:.28}.belt-light{animation:lightPass .9s linear infinite}@keyframes lightPass{0%,100%{opacity:.2}50%{opacity:1;box-shadow:0 0 10px #ffd447}}
-  `}</style>
  </div>
 }
-
 function Tasks({p}:any){const [tasks,setTasks]=useState<any[]>([]);const [claimed,setClaimed]=useState<Record<string,boolean>>({});const [loading,setLoading]=useState(true);useEffect(()=>{let on=true;(async()=>{if(!supabase||!p.userId){setLoading(false);return}const {data}=await supabase.from("tasks").select("id,title,description,reward,task_type").eq("active",true).order("created_at",{ascending:false});if(on)setTasks(data||[]);const {data:ut}=await supabase.from("user_tasks").select("task_id,status").eq("user_id",p.userId);if(on){const m:any={};(ut||[]).forEach((x:any)=>{m[x.task_id]=x.status==="claimed"});setClaimed(m)}setLoading(false)})();return()=>{on=false}},[p.userId]);const claim=async(t:any)=>{if(claimed[t.id])return;if(!supabase||!p.userId){p.notify("Connect your account to claim rewards");return}const {data,error}=await supabase.rpc("claim_task",{p_task_id:t.id});if(error){p.notify(error.message?.includes("already claimed")?"Task already claimed":"Reward claim failed");return}const reward=Number(data?.reward)||0;setClaimed(v=>({...v,[t.id]:true}));if(reward>0){p.refreshBalance?.();}p.notify(reward>0?("+"+reward.toFixed(2)+" PP added to your wallet"):"Task claimed successfully")};return <div className="space-y-5"><Title title="Tasks" sub="Complete tasks and earn more PP Coin."/><div className="flex gap-2 overflow-x-auto pb-1">{["All","Daily","Mining","Social"].map((x,i)=><span key={x} className={`whitespace-nowrap rounded-full border px-5 py-2.5 text-sm font-bold ${i===0?"border-[#2f70f4] bg-[#2f70f4] text-white":"border-[#e4e8f0] bg-white text-[#8993a6]"}`}>{x}</span>)}</div><Card>{loading?<div className="p-6 text-center text-sm text-[#8993a6]">Loading tasks…</div>:tasks.length===0?<div className="p-6 text-center text-sm text-[#8993a6]">No active tasks yet</div>:tasks.map((t:any)=><Task key={t.id} icon={<Gift/>} title={t.title} text={t.description||t.task_type} button={claimed[t.id]?"Claimed":`+${Number(t.reward).toFixed(2)} PP`} onClick={()=>claim(t)}/>)}</Card></div>}
 
 function Wallet({p}:any){
