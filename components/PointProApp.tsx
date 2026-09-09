@@ -146,7 +146,13 @@ function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP C
     <div className="absolute bottom-1 left-5 h-5 w-5 rounded-full border-2 border-slate-500 bg-[#111a25] animate-spin"/><div className="absolute bottom-1 right-5 h-5 w-5 rounded-full border-2 border-slate-500 bg-[#111a25] animate-spin" style={{animationDuration:"1.1s"}}/>
    </div>
 
-   <div className="pointer-events-none absolute left-[39%] top-[55%] h-16 w-[58%]">{[0,1,2,3,4,5].map(i=><div key={i} className="coin absolute top-2 grid h-10 w-10 place-items-center rounded-full border-2 border-yellow-100 bg-gradient-to-br from-yellow-100 via-yellow-400 to-amber-700 text-[13px] font-black text-amber-900 shadow-[0_0_18px_rgba(255,211,48,.5)]" style={{animationDelay:(i*.8)+"s"}}>PP</div>)}</div>
+   <div className="pointer-events-none absolute left-[40%] right-[4%] top-[52%] z-10 h-20 overflow-hidden rounded-2xl">
+     <div className="collection-glow absolute inset-y-4 left-0 right-0 rounded-full bg-[#ffd33a]/10 blur-xl"/>
+     {[0,1,2,3,4,5,6].map(i=><div key={i} className={"live-coin absolute top-5 grid h-9 w-9 place-items-center rounded-full border-2 border-yellow-100/90 bg-gradient-to-br from-[#fff4a8] via-[#ffd33a] to-[#b66a00] text-[10px] font-black text-[#6b3d00] shadow-[0_0_18px_rgba(255,211,58,.55),inset_0_1px_2px_rgba(255,255,255,.8)] "+(p.mining?"":"paused")} style={{animationDelay:(i*0.68)+"s"}}><span className="grid h-5 w-5 place-items-center rounded-full border border-[#8b5700]/50 bg-[#ffd84d]/80">PP</span></div>)}
+     <div className="absolute right-1 top-3 grid h-14 w-10 place-items-center rounded-xl border border-white/10 bg-[#071426]/90 shadow-lg backdrop-blur">
+       <div className="h-7 w-6 rounded-md border border-[#ffd33a]/50 bg-[#ffd33a]/10 shadow-[0_0_14px_rgba(255,211,58,.25)]"><div className="mx-auto mt-1 h-1.5 w-1.5 rounded-full bg-[#ffd33a] animate-pulse"/></div>
+     </div>
+   </div>
 
    <div className="absolute right-[5%] top-[9%] h-[38%] w-[38%] rounded-[20px] border border-slate-500 bg-[#07111e]/95 p-3 shadow-[0_15px_35px_rgba(0,0,0,.4)]">
      <div className="flex items-center justify-between text-[9px] font-black text-white"><span>LIVE SIGNAL</span><span className="flex items-center gap-1 text-[6px] text-[#27df78]"><i className="h-1.5 w-1.5 rounded-full bg-[#27df78] animate-pulse"/>ENGINE</span></div>
@@ -155,14 +161,14 @@ function Mine({p}:any){return <div className="space-y-5"><Title title="Mine PP C
    </div>
 
    <div className="absolute left-4 top-4 z-20 rounded-2xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-white shadow-xl backdrop-blur"><div className="flex items-center gap-2 text-[10px] font-black"><span className={"h-2.5 w-2.5 rounded-full "+(p.mining?"bg-[#27df78] animate-pulse":"bg-slate-500")}/>{p.mining?"MINING ACTIVE":"MINING PAUSED"}</div><div className="mt-1 text-sm font-black">+{p.speed.toFixed(5)} PP/s</div></div>
-   <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/10 bg-[#071426]/90 px-4 py-1.5 text-[10px] font-bold text-white shadow-lg"><span className="mr-1 text-[#27df78]">●</span> Live coin collection</div>
+   <div className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full border border-white/10 bg-[#071426]/90 px-4 py-1.5 text-[10px] font-bold text-white shadow-lg"><span className={"mr-1 "+(p.mining?"text-[#27df78]":"text-slate-500")}>●</span> {p.mining?"Live coin collection":"Collection paused"} <span className="ml-2 text-slate-500">• Secure session</span></div>
   </div>
   <div className="grid grid-cols-3 border-t border-white/10 px-3 py-3 text-center text-[10px]"><div><span className="block text-slate-400">Rate</span><b className="text-white">+{p.speed.toFixed(5)} PP/s</b></div><div className="border-x border-white/10"><span className="block text-slate-400">Per Minute</span><b className="text-white">+{(p.speed*60).toFixed(4)} PP</b></div><div><span className="block text-slate-400">24H Progress</span><b className="text-[#27df78]">0%</b></div></div>
   <style jsx>{`
    @keyframes belt{to{transform:translateX(62px)}} 
    @keyframes coinMove{0%{left:-2%;transform:translateY(8px) scale(.45) rotate(-20deg);opacity:0}8%{opacity:1}35%{transform:translateY(-2px) scale(1) rotate(8deg);opacity:1}72%{transform:translateY(2px) scale(.92) rotate(-10deg);opacity:1}100%{left:92%;transform:translateY(7px) scale(.48) rotate(25deg);opacity:0}}
-   .coin{animation:coinMove 4.8s cubic-bezier(.2,.55,.25,1) infinite}
-   @keyframes signalPulse{0%,70%,100%{opacity:.28;transform:scale(.85)}12%,25%{opacity:1;transform:scale(1);box-shadow:0 0 12px currentColor}}
+   .live-coin{animation:coinMove 4.8s cubic-bezier(.2,.55,.25,1) infinite}.live-coin.paused{animation-play-state:paused;opacity:.35}.collection-glow{animation:glowPulse 1.8s ease-in-out infinite}
+   @keyframes glowPulse{0%,100%{opacity:.25;transform:scaleX(.9)}50%{opacity:.7;transform:scaleX(1)}}\n   @keyframes signalPulse{0%,70%,100%{opacity:.28;transform:scale(.85)}12%,25%{opacity:1;transform:scale(1);box-shadow:0 0 12px currentColor}}
    .signal-dot{animation:signalPulse 2.8s ease-in-out infinite}
   `}</style>
  </section>
