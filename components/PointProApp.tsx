@@ -170,7 +170,28 @@ function Mine({p}:any){
    <div className="grid grid-cols-3 border-t border-white/10 bg-[#07111d] px-3 py-3 text-center text-[10px]"><div><span className="block text-slate-400">Mining Rate</span><b className="text-white">+{p.speed.toFixed(5)} PP/s</b></div><div className="border-x border-white/10"><span className="block text-slate-400">Session</span><b className="text-white tabular-nums">{hh}:{mm}:{ss}</b></div><div><span className="block text-slate-400">Today</span><b className="text-[#39e58b]">+{p.today.toFixed(4)} PP</b></div></div>
   </section>
   <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#174bc8] p-6 text-white"><img src="/pp-coin-stack.svg" className="absolute -right-6 bottom-0 w-44 opacity-90"/><p className="text-sm text-blue-100">PP Coin Balance</p><b className="mt-1 block text-4xl tabular-nums">{p.balance.toFixed(6)} PP</b><p className="mt-6 text-sm text-blue-100">Mining power</p><b className="text-xl">+{p.speed.toFixed(5)} PP / sec</b></section>
-  <Card title="Mining Statistics"><Row a="Per minute" b={"+"+(p.speed*60).toFixed(4)+" PP"}/><Row a="Per hour" b={"+"+(p.speed*3600).toFixed(2)+" PP"}/><Row a="Per day" b={"+"+(p.speed*86400).toFixed(2)+" PP"}/><Row a="Mining status" b={p.mining?"Active":"Paused"}/></Card>
+  <Card title="Production Details">
+   <div className="mb-4 overflow-hidden rounded-2xl bg-[#071426]">
+    <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline controls />
+   </div>
+   <div className="rounded-2xl bg-[#f5f7fb] p-4">
+    <div className="flex items-center justify-between"><div><b className="text-sm">Live production rate</b><p className="mt-0.5 text-xs text-[#8993a6]">Calculated from the current mining power</p></div><span className="rounded-full bg-[#e8fff3] px-3 py-1.5 text-[10px] font-black text-[#20b96c]">LIVE</span></div>
+    <div className="mt-4 grid grid-cols-2 gap-2.5">
+     <Prod label="Per second" value={p.speed.toFixed(5)+" PP"}/>
+     <Prod label="Per minute" value={(p.speed*60).toFixed(4)+" PP"}/>
+     <Prod label="Per hour" value={(p.speed*3600).toFixed(3)+" PP"}/>
+     <Prod label="Per day" value={(p.speed*86400).toFixed(3)+" PP"}/>
+     <Prod label="7 days" value={(p.speed*86400*7).toFixed(3)+" PP"}/>
+     <Prod label="30 days" value={(p.speed*86400*30).toFixed(3)+" PP"}/>
+    </div>
+   </div>
+   <div className="mt-3 rounded-2xl border border-[#e4e9f1] p-4">
+    <div className="flex items-center justify-between"><b className="text-sm">Production formula</b><span className="text-xs font-bold text-[#2f70f4]">{p.boost?"+20% boost":"Base rate"}</span></div>
+    <p className="mt-2 text-xs leading-5 text-[#66728a]">PP produced = mining rate × active time. The server remains the source of truth for credited earnings; the figures here are live production estimates for the mining UI.</p>
+    <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[10px]"><MiniStat label="Base" value="+0.00124 PP/s"/><MiniStat label="Boosted" value="+0.001488 PP/s"/><MiniStat label="24H boosted" value="+128.563 PP"/></div>
+   </div>
+   <div className="mt-3"><Row a="Mining status" b={p.mining?"Active":"Paused"}/></div>
+  </Card>
   <Card title="Boost Center"><Boost name="Energy Boost" value="+10%" active={p.boost} onClick={()=>p.setBoost(true)}/><Boost name="Super Boost" value="+20%" active={p.boost} onClick={()=>p.setBoost(true)}/></Card>
   <section className="rounded-[28px] bg-white p-5 shadow-[0_10px_28px_rgba(31,51,86,.07)]">
    <div className="flex items-start justify-between gap-3"><div><h2 className="text-[20px] font-black">Premium Mining Plans</h2><p className="mt-1 text-xs leading-5 text-[#8993a6]">Choose extra mining power for your account.</p></div><span className="rounded-full bg-[#eef5ff] px-3 py-1.5 text-[10px] font-black text-[#2f70f4]">30 DAYS</span></div>
@@ -270,6 +291,8 @@ function Profile({p}:any){const [profile,setProfile]=useState<any>(null);const [
 
 function Title({title,sub}:{title:string;sub:string}){return <div><h1 className="text-[30px] font-black tracking-tight">{title}</h1><p className="mt-1 text-sm text-[#8993a6]">{sub}</p></div>}
 function Mini({title,value}:{title:string;value:string}){return <div className="rounded-2xl bg-white/10 p-3 backdrop-blur"><small className="text-xs text-blue-100">{title}</small><b className="mt-1 block text-sm">{value}</b></div>}
+function Prod({label,value}:{label:string;value:string}){return <div className="rounded-2xl bg-white p-3 shadow-sm"><span className="block text-[10px] font-bold text-[#8993a6]">{label}</span><b className="mt-1 block text-sm tabular-nums">{value}</b></div>}
+function MiniStat({label,value}:{label:string;value:string}){return <div className="rounded-xl bg-[#f5f7fb] p-2"><span className="block text-[#8993a6]">{label}</span><b className="mt-1 block text-[10px] tabular-nums">{value}</b></div>}
 function Quick({icon,label,onClick}:any){return <button onClick={onClick} className="flex flex-col items-center gap-2 rounded-2xl bg-white p-3 text-xs font-bold text-[#556179] shadow-[0_8px_22px_rgba(31,51,86,.07)]">{icon}{label}</button>}
 function WalletAction({icon,label,onClick}:any){return <button onClick={onClick} className="flex flex-col items-center gap-2 rounded-2xl bg-white p-3 text-[11px] font-bold text-[#556179] shadow-[0_8px_22px_rgba(31,51,86,.07)]">{icon}{label}</button>}
 function Card({title,children}:any){return <section className="rounded-[28px] bg-white p-5 shadow-[0_10px_28px_rgba(31,51,86,.07)]">{title&&<h2 className="mb-2 text-[20px] font-black">{title}</h2>}{children}</section>}
