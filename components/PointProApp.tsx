@@ -169,10 +169,40 @@ function Mine({p}:any){
    </div>
    <div className="grid grid-cols-3 border-t border-white/10 bg-[#07111d] px-3 py-3 text-center text-[10px]"><div><span className="block text-slate-400">Mining Rate</span><b className="text-white">+{p.speed.toFixed(5)} PP/s</b></div><div className="border-x border-white/10"><span className="block text-slate-400">Session</span><b className="text-white tabular-nums">{hh}:{mm}:{ss}</b></div><div><span className="block text-slate-400">Today</span><b className="text-[#39e58b]">+{p.today.toFixed(4)} PP</b></div></div>
   </section>
-  <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#2f70f4] to-[#174bc8] p-6 text-white"><img src="/pp-coin-stack.svg" className="absolute -right-6 bottom-0 w-44 opacity-90"/><p className="text-sm text-blue-100">PP Coin Balance</p><b className="mt-1 block text-4xl tabular-nums">{p.balance.toFixed(6)} PP</b><p className="mt-6 text-sm text-blue-100">Mining power</p><b className="text-xl">+{p.speed.toFixed(5)} PP / sec</b></section>
+  <section className="relative overflow-hidden rounded-[28px] bg-[#071426] text-white shadow-[0_20px_55px_rgba(5,16,30,.25)]">
+   <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(47,131,255,.26),transparent_34%),radial-gradient(circle_at_78%_72%,rgba(255,190,60,.13),transparent_30%),linear-gradient(145deg,#071426,#0b2138_55%,#030914)]"/>
+   <div className="relative min-h-[255px] overflow-hidden p-5">
+    <div className="absolute -right-10 -top-8 h-44 w-44 rounded-full border-[18px] border-[#2f70f4]/25 bg-[#0b2a4d] shadow-[0_0_55px_rgba(47,131,255,.25)]"><div className="grid h-full place-items-center text-6xl font-black text-[#54a9ff]/60">P</div></div>
+    <div className="relative z-10 max-w-[58%]"><p className="text-[26px] font-black tracking-tight">Mine PP Coin</p><p className="mt-1 text-sm text-slate-300">Turn your time into value</p></div>
+    <div className="absolute right-4 top-4 z-20 rounded-2xl border border-white/15 bg-[#071426]/90 px-4 py-3 shadow-xl backdrop-blur">
+      <div className="flex items-center gap-2 text-xs font-black"><span className={`h-2.5 w-2.5 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"Mining Active":"Mining Paused"}</div>
+      <b className="mt-1 block text-lg tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
+    </div>
+    <div className="absolute bottom-5 left-4 right-4 z-20 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-[#071426]/90 backdrop-blur">
+      <div className="p-3"><span className="block text-[10px] text-slate-400">Mining Power</span><b className="mt-1 block text-sm tabular-nums">+{p.speed.toFixed(5)} PP/s</b></div>
+      <div className="border-x border-white/10 p-3"><span className="block text-[10px] text-slate-400">Session Time</span><b className="mt-1 block text-sm tabular-nums">{hh}:{mm}:{ss}</b></div>
+      <div className="p-3"><span className="block text-[10px] text-slate-400">Live Collection</span><b className="mt-1 block text-sm tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b></div>
+    </div>
+   </div>
+  </section>
   <Card title="Production Details">
    <div className="mb-4 overflow-hidden rounded-2xl bg-[#071426]">
-    <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline controls />
+    <div className="relative overflow-hidden">
+     <video className="aspect-[16/10] w-full object-cover" src="/mining-production.mp4" autoPlay muted loop playsInline />
+     <div className="pointer-events-none absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
+      <div className="rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-white shadow-lg backdrop-blur">
+       <div className="flex items-center gap-2 text-[10px] font-black"><span className={`h-2 w-2 rounded-full ${p.mining?"bg-[#39e58b] animate-pulse":"bg-slate-500"}`}/>{p.mining?"MINING ACTIVE":"MINING PAUSED"}</div>
+       <b className="mt-0.5 block text-sm tabular-nums">+{p.speed.toFixed(5)} PP/s</b>
+      </div>
+      <div className="rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-right text-white shadow-lg backdrop-blur">
+       <span className="block text-[9px] text-slate-400">LIVE COLLECTION</span>
+       <b className="block text-base tabular-nums text-[#ffd447]">{(p.today+((sessionSeconds%15)*p.speed)).toFixed(4)} PP</b>
+      </div>
+     </div>
+     <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-xl border border-white/10 bg-[#071426]/90 px-3 py-2 text-[10px] text-white shadow-lg backdrop-blur">
+      <span>Session {hh}:{mm}:{ss}</span><span className="text-[#39e58b]">● Live production</span>
+     </div>
+    </div>
    </div>
    <div className="rounded-2xl bg-[#f5f7fb] p-4">
     <div className="flex items-center justify-between"><div><b className="text-sm">Live production rate</b><p className="mt-0.5 text-xs text-[#8993a6]">Calculated from the current mining power</p></div><span className="rounded-full bg-[#e8fff3] px-3 py-1.5 text-[10px] font-black text-[#20b96c]">LIVE</span></div>
