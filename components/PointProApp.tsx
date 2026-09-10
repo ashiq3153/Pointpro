@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home as HomeIcon, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu, Mail, LockKeyhole, LogIn, UserPlus, LogOut, Trophy } from "lucide-react";
-import TelegramLoginButton from "./TelegramLoginButton";
 
 type Tab = "home" | "mine" | "tasks" | "wallet" | "profile" | "admin";
 const SPEED=0.00124;
@@ -88,7 +87,6 @@ function AuthScreen(){
    {mode==="register"&&<AuthInput icon={<Gift size={18}/>} value={referral} onChange={setReferral} placeholder="Referral code (optional)"/>}
    <button disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25d67c] py-3.5 font-black text-[#06101d] disabled:opacity-60">{busy?"Please wait…":mode==="login"?"Login to PointPro":"Create PointPro Account"}</button>
   </form>
-  <TelegramLoginButton />
   {message&&<div className={`mt-4 rounded-2xl p-3 text-center text-sm ${message.toLowerCase().includes("success")||message.toLowerCase().includes("created")?"bg-[#0d3b2a] text-[#74f2ad]":"bg-[#3d1820] text-[#ff9aaa]"}`}>{message}</div>}
   <p className="mt-5 text-center text-xs leading-5 text-slate-500">Your account is secured by Supabase Authentication. Your mining data stays linked to your account.</p>
  </section></div></div>
