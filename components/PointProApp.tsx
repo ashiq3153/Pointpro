@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home as HomeIcon, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu, Mail, LockKeyhole, LogIn, UserPlus, LogOut, Trophy } from "lucide-react";
+import { Bell, ChevronRight, CircleHelp, Copy, Gift, Home as HomeIcon, ListChecks, Share2, ShieldCheck, Sparkles, UserRound, Users, WalletCards, Zap, ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, Play, Pause, CheckCircle2, TrendingUp, BarChart3, Menu, Mail, LockKeyhole, LogIn, UserPlus, LogOut, Trophy, FileText } from "lucide-react";
 
 type Tab = "home" | "mine" | "tasks" | "wallet" | "profile" | "admin";
 const SPEED=0.00124;
@@ -50,7 +50,7 @@ export default function PointProApp(){
    {tab==="mine"&&<Mine p={{balance,today,mining,speed,boost,setMining:toggleMining,setBoost,notify}}/>}
    {tab==="tasks"&&<Tasks p={{mining,setMining:toggleMining,share,notify,userId,refreshBalance}}/>}
    {tab==="wallet"&&<Wallet p={{balance,today,userId,notify,refreshBalance}}/>}
-   {tab==="profile"&&<Profile p={{copy,share,userId}}/>}
+   {tab==="profile"&&<Profile p={{copy,share,userId,balance,notify}}/>}
   </main>
   <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#e3e8f1] bg-white/98 backdrop-blur"><div className="mx-auto grid max-w-[680px] grid-cols-5">
    {([["home",HomeIcon,"Home"],["mine",Zap,"Mine"],["tasks",ListChecks,"Tasks"],["wallet",WalletCards,"Wallet"],["profile",UserRound,"Profile"]] as const).map(([k,I,l])=><button key={k} onClick={()=>setTab(k)} className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold ${tab===k?"text-[#2868ed]":"text-[#8993a6]"}`}><I size={22} strokeWidth={tab===k?2.5:2}/><span>{l}</span></button>)}
