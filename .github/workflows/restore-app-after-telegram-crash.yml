@@ -1,0 +1,31 @@
+name: Restore app after Telegram client crash
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  restore:
+    if: ${{ !contains(github.event.head_commit.message, 'Restore app after Telegram client crash') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove crashing Telegram widget from client UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('components/PointProApp.tsx')
+          s = p.read_text()
+          s = s.replace('import TelegramLoginButton from "./TelegramLoginButton";\n', '')
+          s = s.replace('  <TelegramLoginButton />\n', '')
+          p.write_text(s)
+          PY
+      - name: Commit restore
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add components/PointProApp.tsx
+          git diff --cached --quiet || git commit -m 'Restore app after Telegram client crash'
+          git push
