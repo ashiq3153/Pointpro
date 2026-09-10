@@ -94,10 +94,10 @@ function AuthScreen(){
 function AuthInput({icon,value,onChange,placeholder,type="text",required=false}:any){return <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#06101d] px-4 py-3 text-slate-400 focus-within:border-[#2f70f4]"><span>{icon}</span><input className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-600" value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} type={type} required={required}/></label>}
 
 function HomePage({p}:any){
- const [daily,setDaily]=useState<any>(null),[dailyLoading,setDailyLoading]=useState(false);
- useEffect(()=>{if(!supabase||!p.userId)return;(async()=>{const {data}=await supabase.from('daily_reward_claims').select('reward_day,claim_date,reward').eq('user_id',p.userId).order('claim_date',{ascending:false}).limit(1).maybeSingle();setDaily(data)})()},[p.userId]);
- const claimDaily=async()=>{setDailyLoading(true);const {data,error}=await supabase.rpc('claim_daily_reward');setDailyLoading(false);if(error){p.notify(error.message?.includes('already claimed')?'Today\'s reward is already claimed':'Daily reward is unavailable');return}setDaily({reward_day:data.day,claim_date:new Date().toISOString().slice(0,10),reward:data.reward});await p.refreshBalance?.();p.notify('+'+Number(data.reward).toFixed(2)+' PP daily reward added')};
- const todayClaimed=daily?.claim_date===new Date().toISOString().slice(0,10), rewardDay=todayClaimed?Number(daily?.reward_day||1):Math.min(Number(daily?.reward_day||0)+1,7), rewards=[1,2,3,5,7,10,15];
+ const [dailyReward,setDailyReward]=useState<any>(null),[dailyLoading,setDailyLoading]=useState(false);
+ useEffect(()=>{if(!supabase||!p.userId)return;(async()=>{const {data}=await supabase.from('daily_reward_claims').select('reward_day,claim_date,reward').eq('user_id',p.userId).order('claim_date',{ascending:false}).limit(1).maybeSingle();setDailyReward(data)})()},[p.userId]);
+ const claimDaily=async()=>{setDailyLoading(true);const {data,error}=await supabase.rpc('claim_daily_reward');setDailyLoading(false);if(error){p.notify(error.message?.includes('already claimed')?'Today\'s reward is already claimed':'Daily reward is unavailable');return}setDailyReward({reward_day:data.day,claim_date:new Date().toISOString().slice(0,10),reward:data.reward});await p.refreshBalance?.();p.notify('+'+Number(data.reward).toFixed(2)+' PP daily reward added')};
+ const todayClaimed=dailyReward?.claim_date===new Date().toISOString().slice(0,10), rewardDay=todayClaimed?Number(dailyReward?.reward_day||1):Math.min(Number(dailyReward?.reward_day||0)+1,7), rewards=[1,2,3,5,7,10,15];
  const [seconds,setSeconds]=useState(0);
  useEffect(()=>{if(!p.mining)return;const id=window.setInterval(()=>setSeconds(v=>v+1),1000);return()=>clearInterval(id)},[p.mining]);
  const hh=String(Math.floor(seconds/3600)).padStart(2,"0");
@@ -105,7 +105,7 @@ function HomePage({p}:any){
  const ss=String(seconds%60).padStart(2,"0");
  const sessionEarned=seconds*p.speed;
  const hourly=p.speed*3600;
- const daily=p.speed*86400;
+ const dailyEarnings=p.speed*86400;
  return <div className="space-y-5 pb-2">
   <div className="flex items-center justify-between">
    <div><p className="text-sm font-semibold text-[#8993a6]">Welcome back 👋</p><h1 className="mt-1 text-[28px] font-black tracking-tight text-[#142039]">Dashboard</h1></div>
@@ -134,7 +134,7 @@ function HomePage({p}:any){
     <div className="relative grid h-24 w-24 shrink-0 place-items-center rounded-full p-1" style={{background:`conic-gradient(#2f70f4 ${Math.max(4,p.progress)}%,#e9edf4 0)`}}>
      <div className="grid h-full w-full place-items-center rounded-full bg-white text-center"><div><b className="block text-xl tabular-nums text-[#17233a]">{p.progress}%</b><small className="text-[8px] font-bold text-[#8993a6]">24H</small></div></div>
     </div>
-    <div className="flex-1"><div className="flex items-center justify-between text-xs"><span className="font-bold text-[#66728a]">Daily progress</span><b className="text-[#17233a]">{p.progress}%</b></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-[#edf1f6]"><div className="h-full rounded-full bg-gradient-to-r from-[#2868ed] to-[#58a8ff]" style={{width:`${Math.max(3,p.progress)}%`}}/></div><div className="mt-3 grid grid-cols-2 gap-3 text-xs"><div className="rounded-xl bg-[#f5f8fc] p-2.5"><span className="text-[#8993a6]">Per hour</span><b className="mt-1 block tabular-nums">{hourly.toFixed(3)} PP</b></div><div className="rounded-xl bg-[#f5f8fc] p-2.5"><span className="text-[#8993a6]">Per day</span><b className="mt-1 block tabular-nums">{daily.toFixed(2)} PP</b></div></div></div>
+    <div className="flex-1"><div className="flex items-center justify-between text-xs"><span className="font-bold text-[#66728a]">Daily progress</span><b className="text-[#17233a]">{p.progress}%</b></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-[#edf1f6]"><div className="h-full rounded-full bg-gradient-to-r from-[#2868ed] to-[#58a8ff]" style={{width:`${Math.max(3,p.progress)}%`}}/></div><div className="mt-3 grid grid-cols-2 gap-3 text-xs"><div className="rounded-xl bg-[#f5f8fc] p-2.5"><span className="text-[#8993a6]">Per hour</span><b className="mt-1 block tabular-nums">{hourly.toFixed(3)} PP</b></div><div className="rounded-xl bg-[#f5f8fc] p-2.5"><span className="text-[#8993a6]">Per day</span><b className="mt-1 block tabular-nums">{dailyEarnings.toFixed(2)} PP</b></div></div></div>
    </div>
    <button onClick={()=>p.setMining((v:boolean)=>!v)} className={`mt-5 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-black text-white shadow-[0_10px_20px_rgba(47,112,244,.18)] ${p.mining?"bg-[#2f70f4]":"bg-[#17233a]"}`}>{p.mining?<><Pause size={17}/> Pause Mining</>:<><Play size={17}/> Start Mining</>}</button>
   </section>
