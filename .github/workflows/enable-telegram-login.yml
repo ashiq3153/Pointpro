@@ -1,15 +1,13 @@
 name: Enable Telegram Login
 
-on:
-  push:
-    paths:
-      - .github/workflows/enable-telegram-login.yml
+on: push
 
 permissions:
   contents: write
 
 jobs:
   patch:
+    if: ${{ !contains(github.event.head_commit.message, 'Add Telegram sign in to PointPro') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
