@@ -1,0 +1,1 @@
+-- Already applied to the linked production database; retained for Supabase Preview migration-history reconciliation.
